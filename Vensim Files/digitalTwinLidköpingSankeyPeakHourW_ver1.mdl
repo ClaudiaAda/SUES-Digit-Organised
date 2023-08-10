@@ -1,0 +1,1485 @@
+{UTF-8}
+rate new small house DHP users=
+	MAX(0, ((Scen 4 Goal ratio DHP users small houses- ratio of DHP users small houses)*\
+		small houses electric heated EH
+	/LT Scen 4
+	))
+	~	units/Month
+	~		|
+
+rate new apartment buildings DHP users=
+	MAX(0, ((Scen 4 Goal ratio DHP users apartment buildings- ratio of DHP users apartment buildings\
+		)*apartment building electric heated EH
+	/LT Scen 4))
+	~	units/Month
+	~		|
+
+sum energy production=
+	bio fuels biodrivmedel+Bio gas+Oil products+sum bio fuels green+sum electric energy production EEP\
+		+Propane and natural gas Industry+CGP use of wastes
+	~	MWh
+	~		|
+
+increase waste use for CGP=
+	gross CGP incl distribution losses-distant heating production at CGP
+	~	MWh
+	~		|
+
+init water energy=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E29' )
+	~	MWh
+	~		|
+
+electric energy water=
+	init water energy
+	~	MWh
+	~		|
+
+sum energy usage=
+	bio fuels biodrivmedel+bio fuels small houses direct heating green+bio gas Industry+\
+		gross DHP incl distribution losses+
+	total electricity incl distribution losses+Propane and natural gas Industry+total oil energy usage on consumptions side\
+		+gross CGP incl distribution losses
+	~	MWh
+	~		|
+
+CGP use of wastes= INTEG (
+	input wastes for CGP regulation,
+		init CGP use of wastes)
+	~	MWh
+	~		|
+
+adj delay increase wastes for CGP=
+	3
+	~	Month
+	~		|
+
+gross CGP incl distribution losses=
+	IF THEN ELSE(distribution losses CGP>0, distribution losses CGP+total energy use DHP\
+		, 0)
+	~	MWh
+	~		|
+
+input wastes for CGP regulation=
+	increase waste use for CGP/adj delay increase wastes for CGP
+	~	MWh/Month
+	~		|
+
+init CGP use of wastes=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E13' )
+	~	MWh
+	~		|
+
+electricity holiday cottages=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E33' )
+	~	MWh
+	~	2.597
+	|
+
+init input bio fuels DHP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E25' )
+	~	MWh
+	~	84.966
+	|
+
+adj delay increase DHP=
+	2
+	~	Month
+	~		|
+
+input bio fuels DHP= INTEG (
+	input bio fuels regulation,
+		init input bio fuels DHP)
+	~	MWh
+	~		|
+
+increase DHP need=
+	gross DHP incl distribution losses-DHP output
+	~	MWh
+	~		|
+
+input bio fuels regulation=
+	increase DHP need/adj delay increase DHP
+	~	MWh/Month
+	~		|
+
+Scen 3 ratio New houses DHP user=
+	1
+	~	Dmnl
+	~	0 to 100% -> default is 100%
+	|
+
+new houses S3=
+	pulse new houses S3*Scen 3 ratio New houses DHP user
+	~	units/Month
+	~		|
+
+Scen 1 Ratio of EVs=
+	0
+	~	Dmnl
+	~	0 equal inactive, while any value abobe activates policy, value between 0 \
+		to 100% on slider are EVs in six years (range 0-1)
+	|
+
+small houses electric heated EH= INTEG (
+	new houses S3 wo DHP-rate new small house DHP users,
+		init no small houses-init small houses DHP users)
+	~	units
+	~		|
+
+goal reduction from Electrc Vehicles=
+	Scen 1 Ratio of EVs
+	~	Dmnl
+	~		|
+
+new houses S3 wo DHP=
+	pulse new houses S3*(1-Scen 3 ratio New houses DHP user)
+	~	units/Month
+	~		|
+
+sum electric energy production EEP=
+	electic energy import+internal EEP
+	~	MWh
+	~		|
+
+introducting NIE step function=
+	IF THEN ELSE(Scen 2 New industry establishment NIE=1, STEP(1, LT first NIE Scen 2), \
+		IF THEN ELSE( Scen 2 New industry establishment NIE=2, STEP(1, LT first NIE Scen 2)\
+		+STEP(1, LT first NIE Scen 2+delay starting next NIE), IF THEN ELSE( Scen 2 New industry establishment NIE\
+		=3, STEP(1, LT first NIE Scen 2)+STEP(1, LT first NIE Scen 2+delay starting next NIE\
+		)+STEP(1, LT first NIE Scen 2+2*delay starting next NIE), 0)))
+	~	units
+	~		|
+
+init possible EVpopulation=
+	1000
+	~	units
+	~		|
+
+goal EVadopters=
+	goal reduction from Electrc Vehicles*init possible EVpopulation
+	~	units
+	~		|
+
+EVadopters= INTEG (
+	EV adoption Rate,
+		(1-init fraction nonEVadopters)*init possible EVpopulation)
+	~	units
+	~		|
+
+ratio EV adopters=
+	EVadopters/(potentialEVadopters+EVadopters)
+	~	Dmnl
+	~		|
+
+internal EEP=
+	electric production CGP+electric energy solar+electric energy water+electric energy wind
+	~	MWh
+	~		|
+
+electricity Industry=
+	init electricity Industry+energy consumption per NIE*introducting NIE step function
+	~	MWh
+	~		|
+
+ramp up new wind mills=
+	Scen 6 Large wind mill projects*RAMP(0.25, 24, 28)
+	~	units
+	~		|
+
+growth rate Scen 1=
+	0.25
+	~	Dmnl/Month
+	~		|
+
+potentialEVadopters= INTEG (
+	-EV adoption Rate,
+		init fraction nonEVadopters*init possible EVpopulation)
+	~	units
+	~		|
+
+Scen 6 Large wind mill projects=
+	0
+	~	units
+	~	0-2
+	|
+
+init fraction nonEVadopters=
+	0.98
+	~	Dmnl
+	~		|
+
+EV adoption Rate=
+	growth rate Scen 1*EVadopters*(goal reduction from Electrc Vehicles-ratio EV adopters\
+		)
+	~	units/Month
+	~	AdoptionRate = GrowthRate * Adopters * (PotentialAdopters - Adopters) / \
+		CarryingCapacity
+	|
+
+oil transports=
+	(1-ratio EV adopters)*init oil transports
+	~	MWh
+	~		|
+
+wind energy EEP extension=
+	avg effect wind energy*ramp up new wind mills
+	~	MWh
+	~		|
+
+solar panel EEP extension=
+	avg effect solar panel*solar panel extension
+	~	MWh
+	~		|
+
+sum energy use homes=
+	bio fuels small houses direct heating green+DHP homes+electricity homes+oil homes
+	~	MWh
+	~		|
+
+sum energy use Industry=
+	bio fuels Industry+bio fuels Industry green+bio gas Industry+DHP industry+electricity Industry\
+		+Propane and natural gas Industry+oil industry
+	~	MWh
+	~		|
+
+sum energy use Public=
+	DHP Public+electricity Public+oil Public
+	~	MWh
+	~		|
+
+sum energy use others=
+	DHP others+electricity others+oil others
+	~	MWh
+	~		|
+
+sum energy use Transports=
+	bio fuels transports+electricity Transports+oil transports
+	~	MWh
+	~		|
+
+bio fuels biodrivmedel=
+	bio fuels Agriculture and forrestry+bio fuels Industry+bio fuels transports+CGP use of bio oil
+	~	MWh
+	~		|
+
+bio fuels Industry green=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E6' )
+	~	MWh
+	~		|
+
+oil Public=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E43' )
+	~	MWh
+	~		|
+
+sum energy use Agriculture and forrestry=
+	bio fuels Agriculture and forrestry+electricity Agriculture and forrestry+oil Agriculture and forrestry
+	~	MWh
+	~		|
+
+Oil products=
+	oil Agriculture and forrestry+oil industry+oil transports+oil others+houses oil use+\
+		appartment buildings oil use+DHP use of oil products+oil Public+CGP use of oil products
+	~	MWh
+	~		|
+
+total oil energy usage on consumptions side=
+	oil homes+oil Agriculture and forrestry+oil industry+oil others+oil transports+oil Public
+	~	MWh
+	~		|
+
+sum bio fuels green=
+	input bio fuels DHP+bio fuels small houses direct heating green+input RTflis DHP+bio fuels Industry green\
+		+CGP use of bio fuels green
+	~	MWh
+	~		|
+
+distribution losses=
+	distribution losses DHP+distribution losses from EEP+distribution losses CGP
+	~	MWh
+	~		|
+
+adj delay import EEP=
+	0.2
+	~	Month
+	~		|
+
+Scen 3 New houses=
+	0
+	~	units
+	~	number of hourses complete during the period of building
+	|
+
+avg effect solar panel=
+	0
+	~	MWh/unit
+	~	At PeakHourW = 0 yearly avg is 1MWh per unit. Becomes strange units due to this \
+		model manages yearly energy levels and time perspective of months. Idealy \
+		it should be "hours" and usage of "prefix" watts. Perhaps this needs to be \
+		changed in future to accomodate effect signatures for solar panels energy \
+		production?
+		Value based on 1000MWh per unit as in larger solar panel park.   (0.5 MW * \
+		2000h per year)
+	|
+
+avg effect wind energy=
+	0
+	~	MWh/unit
+	~	At PeakHourW = 0 yearly avg is 17.3 - Calculated value based on 4MW unit \
+		producing full capacity 3500 hours per year and with an average of 33% \
+		capacity the remaining 2500 hours of the year.
+	|
+
+ramp up new solar panel projects=
+	PULSE(12, 1)
+	~	Dmnl/Month
+	~		|
+
+ratio of DHP users apartment buildings=
+	apartment buildings DHP user/(apartment buildings DHP user+apartment building electric heated EH\
+		)
+	~	Dmnl
+	~		|
+
+introducting EVs ramp up function=
+	RAMP( goal reduction from Electrc Vehicles/LT Scen 1 EV, 0, LT Scen 1 EV)
+	~	Dmnl
+	~		|
+
+small houses DHP user= INTEG (
+	new houses S3+rate new small house DHP users,
+		init small houses DHP users)
+	~	units
+	~		|
+
+import EEP regulation=
+	import correction need/adj delay import EEP
+	~	MWh/Month
+	~		|
+
+LT Scen 1 EV=
+	36
+	~	Month
+	~	time from 0 to 100% implemented effect
+	|
+
+LT first NIE Scen 2=
+	24
+	~	Month
+	~		|
+
+delay starting next NIE=
+	24
+	~	Month
+	~		|
+
+energy consumption per NIE=
+	16
+	~	MWh/unit
+	~	100.000 MWh in a year -> givet att 5 dygn per veckans 7 körs ger det ca \
+		6257h per år och snitt ca 16 MW per h utan att ange att det förbrukar \
+		mer eller mindre
+	|
+
+oil homes=
+	appartment buildings oil use+houses oil use
+	~	MWh
+	~		|
+
+Scen 2 New industry establishment NIE=
+	0
+	~	units
+	~		|
+
+new solar panel projects=
+	Scen 5 Large solar panel projects*ramp up new solar panel projects
+	~	units/Month
+	~		|
+
+new solar panels=
+	planned solar panel extension/implementation delay solar panels
+	~	units/Month
+	~		|
+
+Scen 4 Goal ratio DHP users apartment buildings=
+	1
+	~	Dmnl
+	~		|
+
+Scen 5 Large solar panel projects=
+	0
+	~	units
+	~		|
+
+electric energy wind=
+	init wind energy+wind energy EEP extension
+	~	MWh
+	~	see comment for solar energy level
+	|
+
+implementation delay solar panels=
+	6
+	~	Month
+	~	Implementation delays can be created due to delay processes in \
+		Municipality, in developing how and implementing for the Energy company, \
+		and potentially access to panels on the market
+	|
+
+electic energy import= INTEG (
+	import EEP regulation,
+		init import energy)
+	~	MWh
+	~		|
+
+distribution losses from EEP=
+	factor distribution loss EEP * sum electric energy production EEP
+	~	MWh
+	~		|
+
+dm delay municipality=
+	24
+	~	Month
+	~	decision making delay for project planning for the municipality (including \
+		building delays)
+	|
+
+solar panel extension= INTEG (
+	new solar panels,
+		0)
+	~	units
+	~		|
+
+ratio of DHP users small houses=
+	small houses DHP user/(small houses DHP user+small houses electric heated EH)
+	~	Dmnl
+	~		|
+
+planned solar panel extension= INTEG (
+	new solar panel projects-new solar panels,
+		0)
+	~	units
+	~		|
+
+pulse new houses S3=
+	Scen 3 New houses/LT Scen 3*PULSE( dm delay municipality , LT Scen 3)
+	~	units/Month
+	~		|
+
+electric energy solar=
+	init solar energy+solar panel EEP extension
+	~	MWh
+	~	this variable is actually a level, but cannot be used as one due to the \
+		usage of MWh and average effect production per solar panel "unit" (here \
+		unit is larger solar park).
+	|
+
+init electricity Industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E34' )
+	~	MWh
+	~		|
+
+LT Scen 3=
+	24
+	~	Month
+	~	period for building up the new houses
+	|
+
+distant heating production at CGP=
+	CGP output excl Electric production-distribution losses CGP
+	~	MWh
+	~		|
+
+oil others=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E42' )
+	~	MWh
+	~		|
+
+CGP use of bio fuels green=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E10' )
+	~	MWh
+	~		|
+
+bio fuels small houses direct heating green=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E7' )
+	~	MWh
+	~		|
+
+bio fuels Agriculture and forrestry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E4' )
+	~	MWh
+	~	2.185
+	|
+
+bio fuels Industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E5' )
+	~	MWh
+	~	11.979
+	|
+
+bio fuels transports=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E8' )
+	~	MWh
+	~	20.703
+	|
+
+Bio gas=
+	DHP use of Bio gas+bio gas Industry
+	~	MWh
+	~		|
+
+DHP use of Bio gas=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E23' )
+	~	MWh
+	~	0.121
+	|
+
+bio gas Industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E9' )
+	~	MWh
+	~	2.462
+	|
+
+CGP use of bio oil=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E11' )
+	~	MWh
+	~		|
+
+distribution losses DHP=
+	DHP output*factor distribution loss DHP
+	~	MWh
+	~		|
+
+DHP internal losses=
+	factor internal losses DHP*DHP sum input energy
+	~	MWh
+	~		|
+
+CGP internal losses=
+	total CGP energy input*factor internal losses CGP
+	~	MWh
+	~		|
+
+gross DHP incl distribution losses=
+	IF THEN ELSE(distribution losses DHP>0, distribution losses DHP+total energy use DHP\
+		, 0)
+	~	MWh
+	~		|
+
+DHP industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E20' )
+	~	MWh
+	~	11.646
+	|
+
+DHP Public=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E22' )
+	~	MWh
+	~	2.005
+	|
+
+DHP others=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E21' )
+	~	MWh
+	~	20.558
+	|
+
+total energy use DHP=
+	DHP homes+DHP industry+DHP others+DHP Public
+	~	MWh
+	~		|
+
+oil Agriculture and forrestry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E38' )
+	~	MWh
+	~	8.987
+	|
+
+houses oil use=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E39' )
+	~	MWh
+	~		|
+
+factor distibution losses on gross production at CGP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E57' )
+	~	Dmnl
+	~	omräknad faktor på bruttoproduktionen (13.504983%) istället för \
+		nettoproduktionen (15.6136%) utifrån datakälla
+	|
+
+oil industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E41' )
+	~	MWh
+	~		|
+
+distribution losses CGP=
+	factor distibution losses on gross production at CGP*CGP output excl Electric production
+	~	MWh
+	~		|
+
+DHP use of oil products=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E24' )
+	~	MWh
+	~		|
+
+CGP use of oil products=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E12' )
+	~	MWh
+	~		|
+
+DHP output=
+	DHP sum input energy-DHP internal losses
+	~	MWh
+	~		|
+
+CGP output excl Electric production=
+	total CGP energy input-CGP internal losses-electric production CGP
+	~	MWh
+	~		|
+
+EV efficiency=
+	0.2
+	~	Dmnl
+	~		|
+
+electricity Agriculture and forrestry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E32' )
+	~	MWh
+	~		|
+
+input RTflis DHP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E26' )
+	~	MWh
+	~		|
+
+total electricity incl distribution losses=
+	distribution losses from EEP+electricity sum usage
+	~	MWh
+	~		|
+
+electricity Public=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E36' )
+	~	MWh
+	~		|
+
+electricity others=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E35' )
+	~	MWh
+	~		|
+
+electricity sum usage=
+	electricity Agriculture and forrestry+electricity homes+electricity Industry+electricity Public\
+		+electricity others+electricity Transports
+	~	MWh
+	~		|
+
+electricity Transports=
+	init electricity Transports+reduction oil Transports*EV efficiency
+	~	MWh
+	~		|
+
+electric production CGP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E31' )
+	~	MWh
+	~	är detta en variable som beror på någon annan i systemet?
+	|
+
+init import energy=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E27' )
+	~	MWh
+	~		|
+
+DHP sum input energy=
+	input bio fuels DHP+DHP use of Bio gas+DHP use of oil products+input RTflis DHP
+	~	MWh
+	~		|
+
+total CGP energy input=
+	CGP use of wastes+CGP use of bio fuels green+CGP use of bio oil+CGP use of oil products
+	~	MWh
+	~		|
+
+factor internal losses DHP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E56' )
+	~	Dmnl
+	~	calculated value based on data from Lidköping
+	|
+
+factor internal losses CGP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E58' )
+	~	Dmnl
+	~	Beräknat utifrån data Lidköping baserat på identifiering av inre \
+		förluster som andel av total input
+	|
+
+init electricity Transports=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E37' )
+	~	MWh
+	~		|
+
+init solar energy=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E28' )
+	~	MWh
+	~		|
+
+init wind energy=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E30' )
+	~	MWh
+	~		|
+
+reduction oil Transports=
+	init oil transports-oil transports
+	~	MWh
+	~		|
+
+import correction need=
+	total electricity incl distribution losses-sum electric energy production EEP
+	~	MWh
+	~		|
+
+Propane and natural gas Industry=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E45' )
+	~	MWh
+	~		|
+
+init oil transports=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E44' )
+	~	MWh
+	~		|
+
+CGP total energy output to users=
+	electric production CGP+distant heating production at CGP
+	~	MWh
+	~		|
+
+appartment buildings oil use=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E40' )
+	~	MWh
+	~		|
+
+electricity apartment buildings=
+	apartment building electric heated EH*with EH electric usage per apartment building+\
+		apartment buildings DHP user*with DHP electric usage per apartment building
+	~	MWh
+	~		|
+
+apartment building electric heated EH= INTEG (
+	-rate new apartment buildings DHP users,
+		init no apartment buildings-init no apartment buildings DHP users)
+	~	units
+	~		|
+
+apartment buildings DHP user= INTEG (
+	rate new apartment buildings DHP users,
+		init no apartment buildings DHP users)
+	~	units
+	~		|
+
+init small houses DHP users=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E53' )
+	~	units
+	~		|
+
+usage DHP energy per apartment building=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E14' )
+	~	MWh/unit
+	~		|
+
+usage DHP energy per small house=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E15' )
+	~	MWh/unit
+	~		|
+
+usage DHP energy apartment buildings=
+	apartment buildings DHP user*usage DHP energy per apartment building
+	~	MWh
+	~		|
+
+usage DHP energy small houses=
+	usage DHP energy per small house*small houses DHP user
+	~	MWh
+	~		|
+
+with DHP electric usage per apartment building=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E17' )
+	~	MWh/unit
+	~		|
+
+with EH electric usage per apartment building=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E16' )
+	~	MWh/unit
+	~		|
+
+with DHP electric usage per small house=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E19' )
+	~	MWh/unit
+	~		|
+
+with EH electric usage per small house=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E18' )
+	~	MWh/unit
+	~		|
+
+factor distribution loss DHP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E54' )
+	~	Dmnl
+	~	ratio of DHP production leading to losses
+	|
+
+factor distribution loss EEP=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E55' )
+	~	Dmnl
+	~	8% loss of produced Electric Energy
+	|
+
+init no apartment buildings=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E50' )
+	~	units
+	~		|
+
+init no apartment buildings DHP users=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E51' )
+	~	units
+	~		|
+
+init no small houses=
+	GET DIRECT CONSTANTS( 'inputDataSankeyInfo_toVensimDT.xlsx' , 'Lidköping' , 'E52' )
+	~	units
+	~		|
+
+LT Scen 4=
+	12
+	~	Month
+	~		|
+
+DHP homes=
+	usage DHP energy apartment buildings+usage DHP energy small houses
+	~	MWh
+	~		|
+
+electricity homes=
+	electricity apartment buildings+electricity holiday cottages+electricity small houses
+	~	MWh
+	~		|
+
+Scen 4 Goal ratio DHP users small houses=
+	0.3
+	~	Dmnl
+	~	goal defines the portion of DHP users of all houses using electricity from \
+		year null
+	|
+
+electricity small houses=
+	with DHP electric usage per small house*small houses DHP user+with EH electric usage per small house\
+		*small houses electric heated EH
+	~	MWh
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 120
+	~	Month
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Month
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 12
+	~	Month [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.0625
+	~	Month [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-0|-1--1--1|255-255-255|96,96,100,0
+10,1,sum electric energy production EEP,645,322,70,25,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,electic energy import,389,111,48,23,3,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,electric energy water,391,177,46,19,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,4,electric energy solar,380,508,40,20,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,5,2,1,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,6,sum energy production,722,898,46,23,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,7,sum bio fuels green,465,818,60,11,8,131,0,4,-1,0,0,0,-1--1--1,0-255-0,|||0-0-0,0,0,0,0,0,0
+1,8,1,6,1,0,0,0,0,192,0,-1--1--1,,1|(630,689)|
+10,9,Bio gas,605,948,25,11,8,3,0,4,-1,0,0,0,-1--1--1,64-160-98,|||0-0-0,0,0,0,0,0,0
+10,10,bio fuels biodrivmedel,663,1022,42,19,8,3,0,4,-1,0,0,0,-1--1--1,0-255-255,|||0-0-0,0,0,0,0,0,0
+10,11,Oil products,686,1145,51,23,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,12,9,6,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,13,10,6,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,14,11,6,1,0,0,0,0,192,0,-1--1--1,,1|(746,1030)|
+10,15,electric energy wind,390,311,43,25,3,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,16,sum energy usage,899,661,46,23,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,distribution losses,528,575,46,23,8,3,0,4,-1,0,0,0,-1--1--1,192-192-192,|||0-0-0,0,0,0,0,0,0
+10,18,distribution losses from EEP,835,510,47,25,8,3,0,4,-1,0,0,0,-1--1--1,255-128-0,|||0-0-0,0,0,0,0,0,0
+10,19,distribution losses DHP,233,613,56,19,8,3,0,4,-1,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+10,20,electricity homes,1263,621,52,11,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,21,factor distribution loss EEP,792,369,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,22,factor distribution loss DHP,29,640,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,23,22,19,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,24,21,18,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,25,18,17,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,26,19,17,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,27,electricity small houses,1422,490,48,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,28,electricity holiday cottages,1422,608,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,29,electricity apartment buildings,1422,718,64,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,30,27,20,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,31,28,20,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,32,29,20,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,33,with EH electric usage per apartment building,1622,729,71,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,34,init no small houses,1847,532,60,11,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,35,with EH electric usage per small house,1639,437,71,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,36,small houses DHP user,2032,596,49,25,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,37,small houses electric heated EH,1856,599,48,24,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,38,40,36,4,0,0,22,0,0,0,-1--1--1,,1|(1970,616)|
+1,39,40,37,100,0,0,22,0,0,0,-1--1--1,,1|(1924,616)|
+11,40,0,1951,616,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,41,rate new small house DHP users,1951,643,66,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,42,Scen 4 Goal ratio DHP users small houses,2005,817,74,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,43,LT Scen 4,2156,839,34,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,44,42,41,1,0,0,0,0,128,0,-1--1--1,,1|(1980,727)|
+1,45,43,41,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,46,init small houses DHP users,1965,532,51,19,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,47,46,37,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,48,46,36,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,49,34,37,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+10,50,with DHP electric usage per apartment building,1644,783,77,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,51,with DHP electric usage per small house,1563,531,69,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,52,51,27,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,53,35,27,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,54,33,29,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,55,50,29,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,56,usage DHP energy small houses,1778,1014,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,57,usage DHP energy per small house,1794,1100,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,58,apartment building electric heated EH,2269,610,56,35,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,59,apartment buildings DHP user,2466,611,54,33,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,60,62,59,4,0,0,22,0,0,0,-1--1--1,,1|(2394,637)|
+1,61,62,58,100,0,0,22,0,0,0,-1--1--1,,1|(2345,637)|
+11,62,0,2371,637,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,63,rate new apartment buildings DHP users,2371,664,65,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,64,init no apartment buildings,2276,534,53,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,65,init no apartment buildings DHP users,2475,528,65,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,66,64,58,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,67,65,58,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,68,65,59,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,69,43,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,70,57,56,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,71,usage DHP energy apartment buildings,1583,972,61,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,72,usage DHP energy per apartment building,1676,879,72,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,73,72,71,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,74,DHP homes,1591,1038,39,11,8,3,0,4,0,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+1,75,56,74,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,76,71,74,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,77,oil homes,878,1232,31,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,78,37,40,1,0,0,0,0,128,0,-1--1--1,,1|(1929,590)|
+1,79,58,62,1,0,0,0,0,128,0,-1--1--1,,1|(2359,611)|
+10,80,DHP use of oil products,239,1021,47,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,81,input bio fuels DHP,233,826,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,82,DHP use of Bio gas,474,958,51,19,8,3,0,4,0,0,0,0,-1--1--1,64-160-98,|||0-0-0,0,0,0,0,0,0
+10,83,input RTflis DHP,437,873,54,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,84,DHP sum input energy,206,910,49,19,8,3,0,4,0,0,0,0,-1--1--1,0-255-0,|||0-0-0,0,0,0,0,0,0
+1,85,80,84,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,86,81,84,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,87,82,84,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,88,83,84,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,89,CGP use of wastes,181,1594,38,19,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,90,CGP use of oil products,218,1364,47,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,91,CGP use of bio oil,186,1423,58,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,92,CGP use of bio fuels green,165,1478,50,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,93,total CGP energy input,385,1485,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,94,90,93,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,95,91,93,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,96,92,93,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,97,89,93,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,98,electric production CGP,681,1458,53,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+12,99,0,572,1368,88,19,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Lidköping - kraftvärmeverk - cogeneration plant (CGP)
+10,100,distribution losses CGP,712,1580,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,101,distant heating production at CGP,824,1519,61,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,102,CGP total energy output to users,858,1449,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,103,101,102,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,104,98,102,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,105,factor distibution losses on gross production at CGP,495,1589,84,19,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,106,105,100,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,107,CGP internal losses,520,1441,42,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,108,93,107,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,109,factor internal losses CGP,369,1405,44,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,110,109,107,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,111,CGP output excl Electric production,539,1517,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,112,107,111,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,113,98,111,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,114,111,100,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,115,111,101,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,116,100,101,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,117,93,111,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,118,factor internal losses DHP,-17,990,44,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,119,DHP internal losses,44,890,42,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,120,DHP output,-15,738,39,11,8,3,0,4,0,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+1,121,118,119,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,122,84,119,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,123,119,120,1,0,0,0,0,128,0,-1--1--1,,1|(-15,810)|
+1,124,84,120,1,0,0,0,0,128,0,-1--1--1,,1|(74,832)|
+1,125,120,19,1,0,0,0,0,128,0,-1--1--1,,1|(76,674)|
+10,126,bio fuels small houses direct heating green,554,706,68,19,8,3,0,4,0,0,0,0,-1--1--1,0-255-0,|||0-0-0,0,0,0,0,0,0
+1,127,126,7,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,128,81,7,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,129,83,7,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,130,7,6,1,0,0,0,0,128,0,-1--1--1,,1|(585,833)|
+10,131,bio gas Industry,497,911,50,11,8,3,0,4,0,0,0,0,-1--1--1,64-160-98,|||0-0-0,0,0,0,0,0,0
+1,132,82,9,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,133,131,9,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,134,Propane and natural gas Industry,774,817,49,26,8,131,0,4,0,0,0,0,-1--1--1,128-64-0,|||0-0-0,0,0,0,0,0,0
+1,135,134,6,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,136,bio fuels Agriculture and forrestry,462,1010,74,19,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,137,bio fuels Industry,467,1044,54,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,138,bio fuels transports,531,1072,59,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,139,136,10,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,140,137,10,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,141,138,10,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,142,oil Agriculture and forrestry,620,1239,44,29,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,143,oil industry,708,1254,35,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,144,oil transports,1289,1162,41,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,145,oil others,795,1255,30,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,146,houses oil use,790,1194,44,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,147,appartment buildings oil use,848,1153,50,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,148,142,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,149,143,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,150,145,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,151,146,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,152,147,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,153,80,11,1,0,0,0,0,128,0,-1--1--1,,1|(434,1103)|
+10,154,DHP others,1591,1091,38,11,8,3,0,4,0,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+10,155,DHP industry,1589,1183,43,11,8,3,0,4,0,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+10,156,total energy use DHP,1430,1104,50,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,157,19,177,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,158,74,156,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,159,154,156,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,160,155,156,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,161,DHP Public,1593,1138,56,11,8,3,0,4,0,0,0,0,-1--1--1,128-128-0,|||0-0-0,0,0,0,0,0,0
+1,162,161,156,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,163,electricity others,1255,665,51,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,164,electricity Public,1258,697,75,9,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,165,electricity Agriculture and forrestry,1265,749,71,23,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,166,electricity Industry,1228,904,57,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,167,init electricity Transports,1269,1044,42,19,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,168,electricity sum usage,1084,664,45,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,169,20,168,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,170,163,168,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,171,164,168,1,0,0,0,0,128,0,-1--1--1,,1|(1159,688)|
+1,172,165,168,1,0,0,0,0,128,0,-1--1--1,,1|(1145,712)|
+1,173,167,178,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,174,total electricity incl distribution losses,1004,573,59,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,175,18,174,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,176,168,174,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,177,gross DHP incl distribution losses,727,626,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,178,electricity Transports,1147,1006,35,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,179,goal reduction from Electrc Vehicles,1683,1469,62,19,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,180,init oil transports,1238,1235,52,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,181,oil transports,853,1105,50,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,182,181,11,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,183,179,269,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,184,180,144,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,185,reduction oil Transports,1151,1110,40,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,186,144,185,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,187,180,185,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,188,EV efficiency,1270,1095,42,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,189,188,178,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,190,185,178,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,191,0,1269,1322,23,11,8,7,0,4,-1,0,0,0,-1--1--1,192-255-255,|||0-0-0,0,0,0,0,0,0
+Scen 1
+10,192,init wind energy,246,314,49,11,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,193,init solar energy,238,520,49,11,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,194,init import energy,219,111,54,11,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,195,import correction need,689,191,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,196,174,195,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,197,1,195,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,198,194,2,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,199,195,205,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,200,1,18,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,201,48,389,13,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,202,204,2,4,0,0,22,0,0,0,-1--1--1,,1|(389,72)|
+1,203,204,201,100,0,0,22,0,0,0,-1--1--1,,1|(389,29)|
+11,204,0,389,50,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,205,import EEP regulation,434,50,37,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,206,adj delay import EEP,503,-6,52,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,207,206,205,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,208,193,4,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,209,192,15,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+10,210,solar panel extension,225,418,43,24,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+10,211,avg effect solar panel,203,470,73,12,8,131,0,4,0,0,0,0,-1--1--1,192-255-255,|||0-0-0,0,0,0,0,0,0
+10,212,Scen 5 Large solar panel projects,-163,353,60,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,213,planned solar panel extension,11,419,44,22,3,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,214,216,210,4,0,0,22,0,0,0,-1--1--1,,1|(151,417)|
+1,215,216,213,100,0,0,22,0,0,0,-1--1--1,,1|(81,417)|
+11,216,0,114,417,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,217,new solar panels,114,436,52,11,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,218,213,216,1,0,0,0,0,128,0,-1--1--1,,1|(66,384)|
+10,219,implementation delay solar panels,2,496,67,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,220,219,217,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,221,solar panel EEP extension,357,439,51,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,222,210,221,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,223,211,221,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,224,221,4,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,225,wind energy EEP extension,332,238,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,226,avg effect wind energy,199,275,72,14,8,131,0,4,0,0,0,0,-1--1--1,192-255-255,|||0-0-0,0,0,0,0,0,0
+10,227,ramp up new wind mills,193,223,42,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,228,226,225,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,229,225,15,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,230,227,225,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,231,0,-67,267,35,11,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 5
+12,232,0,14,201,35,11,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 6
+12,233,0,2209,334,195,16,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 4 - De-electrification small houses and apartments
+10,234,Scen 4 Goal ratio DHP users apartment buildings,2318,816,80,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,235,234,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,236,ratio of DHP users small houses,1875,733,60,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,237,ratio of DHP users apartment buildings,2446,764,61,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,238,37,236,1,0,0,0,0,128,0,-1--1--1,,1|(1787,667)|
+1,239,36,236,1,0,0,0,0,128,0,-1--1--1,,1|(2022,697)|
+1,240,236,41,1,0,0,0,0,128,0,-1--1--1,,1|(1938,698)|
+1,241,58,237,1,0,0,0,0,128,0,-1--1--1,,1|(2294,726)|
+1,242,59,237,1,0,0,0,0,128,0,-1--1--1,,1|(2533,719)|
+1,243,237,63,1,0,0,0,0,128,0,-1--1--1,,1|(2385,723)|
+10,244,small houses electric heated EH,1599,397,69,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,245,small houses DHP user,1625,485,45,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,246,244,27,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,247,245,27,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,248,apartment building electric heated EH,1607,684,64,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,249,apartment buildings DHP user,1596,833,66,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,250,248,29,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,251,249,29,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,252,245,56,1,0,0,0,0,128,0,-1--1--1,,1|(1722,702)|
+1,253,249,71,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,254,48,2172,596,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,255,257,36,4,0,0,22,0,0,0,-1--1--1,,1|(2106,601)|
+1,256,257,254,100,0,0,22,0,0,0,-1--1--1,,1|(2158,601)|
+11,257,0,2138,601,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,258,new houses S3,2138,620,48,11,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,259,pulse new houses S3,1896,437,33,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,260,259,257,1,0,0,0,0,128,0,-1--1--1,,1|(2088,505)|
+10,261,LT Scen 3,1935,369,34,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,262,Scen 3 New houses,1829,369,66,14,8,131,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,263,261,259,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,264,262,259,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,265,0,2177,363,99,18,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 3 - New houses
+10,266,dm delay municipality,2015,401,76,16,8,131,0,0,0,0,0,0,0,0,0,0,0,0
+1,267,266,259,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,268,LT Scen 1 EV,1501,1269,46,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,269,introducting EVs ramp up function,1619,1332,54,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,270,268,269,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,271,48,-96,416,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,272,274,213,4,0,0,22,0,0,0,-1--1--1,,1|(-54,416)|
+1,273,274,271,100,0,0,22,0,0,0,-1--1--1,,1|(-91,416)|
+11,274,0,-80,416,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,275,new solar panel projects,-80,446,41,22,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+1,276,212,274,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,277,ramp up new solar panel projects,-7,338,59,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,278,277,274,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,279,Scen 2 New industry establishment NIE,1437,804,67,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,280,energy consumption per NIE,1403,926,64,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-255,|||0-0-0,0,0,0,0,0,0
+10,281,init electricity Industry,1296,972,42,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,282,281,166,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,283,280,166,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,284,LT first NIE Scen 2,1457,839,72,11,8,131,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+10,285,delay starting next NIE,1465,875,81,12,8,131,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+12,286,0,1389,174,192,18,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 4 - De-electrification small houses and apartments into distance heating plant (DHP) energy usage
+12,287,0,1321,218,100,12,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 5 - solar panel parks
+12,288,0,1378,111,177,14,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 2 - New Industrialisation Establishment (NIE)
+12,289,0,635,-596,99,18,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 3 - New houses
+12,290,0,635,-596,99,18,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 3 - New houses
+12,291,0,1293,139,99,18,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 3 - New houses
+12,292,0,1319,243,111,13,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 6 - Wind energy mills
+12,293,0,1338,80,137,14,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Scenario 1 - Electric Vehicle introduction 
+1,294,174,16,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,295,177,16,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,296,134,16,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,297,10,16,1,0,0,0,0,128,0,-1--1--1,,1|(826,912)|
+1,298,146,77,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,299,147,77,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,300,126,16,1,0,0,0,0,128,0,-1--1--1,,1|(725,693)|
+1,301,131,16,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,302,total oil energy usage on consumptions side,972,1301,77,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,303,142,302,1,0,0,0,0,128,0,-1--1--1,,1|(707,1280)|
+1,304,143,302,1,0,0,0,0,128,0,-1--1--1,,1|(807,1283)|
+1,305,145,302,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,306,77,302,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,307,181,302,1,0,0,0,0,128,0,-1--1--1,,1|(901,1153)|
+1,308,302,16,1,0,0,0,0,128,0,-1--1--1,,1|(993,1015)|
+10,309,total energy use DHP,848,580,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,310,309,177,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,311,166,168,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,312,178,168,1,0,0,0,0,128,0,-1--1--1,,1|(1127,834)|
+10,313,bio fuels Industry green,431,750,55,19,8,3,0,4,0,0,0,0,-1--1--1,0-255-0,|||0-0-0,0,0,0,0,0,0
+1,314,313,7,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,315,oil Public,520,1255,46,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,316,315,11,1,0,0,0,0,128,0,-1--1--1,,1|(551,1210)|
+1,317,315,302,1,0,0,0,0,128,0,-1--1--1,,1|(764,1331)|
+10,318,distribution losses CGP,308,564,61,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,319,318,17,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,320,90,11,1,0,0,0,0,128,0,-1--1--1,,1|(326,1286)|
+10,321,CGP use of bio oil,628,1102,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,322,321,10,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,323,CGP use of bio fuels green,597,777,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,324,323,7,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,325,potentialEVadopters,1289,1410,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,326,EVadopters,1468,1412,40,20,3,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,327,329,326,4,0,0,22,0,0,0,-1--1--1,,1|(1406,1411)|
+1,328,329,325,100,0,0,22,0,0,0,-1--1--1,,1|(1350,1411)|
+11,329,0,1378,1411,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,330,EV adoption Rate,1378,1437,43,18,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,331,init fraction nonEVadopters,1189,1483,50,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,332,init possible EVpopulation,1255,1548,44,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,333,331,325,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,334,332,325,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,335,331,326,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,336,332,326,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+10,337,growth rate Scen 1,1417,1521,60,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,338,337,330,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,339,ratio EV adopters,1457,1346,56,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,340,326,339,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,341,325,339,1,0,0,0,0,128,0,-1--1--1,,1|(1322,1372)|
+10,342,goal EVadopters,1585,1551,53,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,343,332,342,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,344,179,342,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,345,326,329,1,0,0,0,0,128,0,-1--1--1,,1|(1408,1389)|
+1,346,339,329,1,0,0,0,0,128,0,-1--1--1,,1|(1388,1366)|
+1,347,179,330,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,348,introducting NIE step function,1296,851,53,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,349,285,348,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,350,284,348,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,351,279,348,0,0,0,0,0,64,0,-1--1--1,,1|(0,0)|
+1,352,348,166,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,353,Scen 2 New industry establishment NIE,1016,115,144,15,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,354,0,1833,111,270,12,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+NIE Policy variable prepared for a value 0-3 (default is 0 if no condition is set)
+10,355,internal EEP,508,330,39,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,356,3,355,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,357,15,355,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,358,4,355,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,359,electric production CGP,521,440,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,360,359,355,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,361,355,1,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,362,339,144,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,363,0,1674,215,239,15,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+prepare slider to vary metween 0-12 (default is 0 if no condition is set)
+10,364,Scen 5 Large solar panel projects,1048,212,126,13,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,365,Scen 6 Large wind mill projects,58,147,60,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,366,365,227,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,367,Scen 6 Large wind mill projects,1088,238,115,18,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,368,Scen 1 Ratio of EVs,1831,1383,50,19,8,3,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,369,368,179,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,370,Scen 1 Ratio of EVs,1004,77,84,15,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,371,Scen 3 New houses,1038,149,87,13,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,372,48,1706,595,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,373,375,37,4,0,0,22,0,0,0,-1--1--1,,1|(1791,595)|
+1,374,375,372,100,0,0,22,0,0,0,-1--1--1,,1|(1734,595)|
+11,375,0,1769,595,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,376,new houses S3 wo DHP,1769,622,40,19,40,131,0,0,-1,0,0,0,0,0,0,0,0,0
+10,377,Scen 3 ratio New houses DHP user,1906,492,57,19,8,131,0,4,0,0,0,0,-1--1--1,192-255-192,|||0-0-0,0,0,0,0,0,0
+1,378,377,375,1,0,0,0,0,128,0,-1--1--1,,1|(1801,521)|
+1,379,377,257,1,0,0,0,0,128,0,-1--1--1,,1|(2031,521)|
+1,380,259,375,1,0,0,0,0,128,0,-1--1--1,,1|(1746,506)|
+10,381,increase DHP need,299,668,45,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,382,120,381,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,383,177,381,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+12,384,48,214,709,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,385,387,81,4,0,0,22,0,0,0,-1--1--1,,1|(214,791)|
+1,386,387,384,100,0,0,22,0,0,0,-1--1--1,,1|(214,737)|
+11,387,0,214,771,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,388,input bio fuels regulation,266,771,44,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,389,381,388,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,390,adj delay increase DHP,385,703,57,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,391,390,388,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,392,init input bio fuels DHP,107,767,55,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,393,392,81,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+10,394,init CGP use of wastes,34,1547,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+12,395,48,164,1689,0,0,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,396,398,89,4,0,0,22,0,0,0,-1--1--1,,1|(164,1628)|
+1,397,398,395,100,0,0,22,0,0,0,-1--1--1,,1|(164,1672)|
+11,398,0,164,1650,8,6,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,399,input wastes for CGP regulation,222,1650,50,19,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,400,adj delay increase wastes for CGP,377,1685,57,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,401,394,89,0,0,0,0,0,128,1,-1--1--1,,1|(0,0)|
+1,402,400,399,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,403,increase waste use for CGP,931,1706,59,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,404,403,399,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,405,total energy use DHP,586,1644,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,406,gross CGP incl distribution losses,787,1651,56,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,407,100,406,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,408,405,406,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,409,406,403,1,0,0,0,0,128,0,-1--1--1,,1|(923,1699)|
+1,410,406,16,1,0,0,0,0,128,0,-1--1--1,,1|(1058,1304)|
+10,411,init water energy,257,163,52,11,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,412,411,3,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,413,101,403,1,0,0,0,0,128,0,-1--1--1,,1|(924,1603)|
+10,414,CGP use of wastes,827,979,43,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,415,414,6,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 2
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-0|-1--1--1|255-255-255|96,96,70,0
+10,1,electic energy import,480,145,23,34,8,130,0,5,2,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,2,electric energy water,472,211,16,17,8,130,0,5,2,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,3,electric energy wind,473,261,18,17,8,130,0,5,2,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,4,electric energy solar,475,308,21,14,8,130,0,5,2,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,5,bio fuels biodrivmedel,492,927,76,17,8,130,0,5,2,0,0,0,128-128-128,0-192-192,|||0-255-255,0,0,0,0,0,0
+10,6,sum bio fuels green,468,496,26,41,8,130,0,5,2,0,0,0,128-128-128,0-255-0,|||128-128-128,0,0,0,0,0,0
+10,7,bio fuels small houses direct heating green,1564,311,50,11,8,130,0,5,4,0,0,0,128-128-128,0-255-0,|||128-128-128,0,0,0,0,0,0
+10,8,DHP sum input energy,821,485,32,23,8,130,0,5,2,0,0,0,128-128-128,0-255-0,|||128-128-128,0,0,0,0,0,0
+10,9,DHP internal losses,952,460,75,15,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,10,DHP output,925,523,48,11,8,130,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,11,distribution losses DHP,1561,156,44,17,8,130,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,12,distribution losses from EEP,1565,119,47,12,8,130,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,13,distribution losses,1436,152,40,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,14,electricity Agriculture and forrestry,1541,706,39,12,8,130,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,15,electricity homes,1564,278,45,15,8,130,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,16,sum energy usage,1598,42,77,14,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,17,electricity others,1552,448,35,19,8,2,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,18,electricity Public,1547,569,35,19,8,2,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,19,electricity Industry,1552,831,41,12,8,130,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,20,DHP homes,1562,342,48,11,8,2,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,21,DHP others,1552,481,47,11,8,2,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,22,DHP Public,1550,615,47,11,8,2,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,23,DHP industry,1552,862,41,10,8,130,0,5,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,24,electricity Transports,1554,1065,34,11,8,130,0,5,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,25,Propane and natural gas Industry,471,621,69,19,8,130,0,5,2,0,0,0,128-128-128,128-64-0,|||128-128-128,0,0,0,0,0,0
+10,26,Propane and natural gas Industry,1548,892,45,10,8,130,0,5,4,0,0,0,128-128-128,128-64-0,|||128-128-128,0,0,0,0,0,0
+10,27,Bio gas,475,687,34,11,8,2,0,5,2,0,0,0,128-128-128,64-160-98,|||128-128-128,0,0,0,0,0,0
+10,28,bio gas Industry,1550,924,42,12,8,130,0,5,4,0,0,0,128-128-128,64-160-98,|||128-128-128,0,0,0,0,0,0
+10,29,DHP use of Bio gas,823,525,33,11,8,130,0,5,2,0,0,0,128-128-128,64-160-98,|||128-128-128,0,0,0,0,0,0
+10,30,bio fuels Agriculture and forrestry,1537,734,44,10,8,130,0,5,4,0,0,0,128-128-128,0-192-192,|||128-128-128,0,0,0,0,0,0
+10,31,bio fuels Industry,1556,982,37,11,8,130,0,5,4,0,0,0,128-128-128,0-192-192,|||128-128-128,0,0,0,0,0,0
+10,32,bio fuels transports,1556,1093,34,11,8,130,0,5,4,0,0,0,128-128-128,0-192-192,|||128-128-128,0,0,0,0,0,0
+10,33,Oil products,461,1032,41,25,8,130,0,7,2,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,34,DHP use of oil products,823,558,35,9,8,130,0,7,2,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,35,CGP use of oil products,822,788,37,12,8,130,0,7,2,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,36,oil homes,1565,372,40,11,8,2,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,37,oil others,1560,509,39,11,8,2,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,38,oil Agriculture and forrestry,1538,760,43,10,8,130,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,39,oil industry,1554,1011,38,12,8,130,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,40,oil transports,1558,1126,31,11,8,130,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,41,sum energy production,411,37,85,14,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,42,CGP use of bio fuels green,821,700,34,12,8,130,0,7,2,0,0,0,128-128-128,0-255-0,|||128-128-128,0,0,0,0,0,0
+10,43,bio fuels Industry green,1547,955,44,12,8,130,0,7,4,0,0,0,128-128-128,0-255-0,|||128-128-128,0,0,0,0,0,0
+10,44,oil Public,1552,652,39,11,8,130,0,7,4,0,0,0,128-128-128,92-92-92,|||128-128-128,0,0,0,0,0,0
+10,45,CGP use of wastes,821,726,36,12,8,130,0,7,2,0,0,0,128-128-128,128-0-0,|||128-128-128,0,0,0,0,0,0
+10,46,CGP use of bio oil,821,760,38,11,8,130,0,7,2,0,0,0,128-128-128,0-192-192,|||128-128-128,0,0,0,0,0,0
+10,47,electric production CGP,900,697,30,8,8,130,0,7,4,0,0,0,128-128-128,255-128-0,|||128-128-128,0,0,0,0,0,0
+10,48,CGP output excl Electric production,902,751,33,41,8,130,0,7,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,49,distribution losses CGP,1563,188,44,10,8,130,0,7,4,0,0,0,128-128-128,128-128-0,|||128-128-128,0,0,0,0,0,0
+10,50,CGP internal losses,951,812,77,14,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,51,CGP use of wastes,475,762,33,25,8,130,0,7,2,0,0,0,128-128-128,128-0-0,|||128-128-128,0,0,0,0,0,0
+10,52,CGP total energy output to users,913,861,129,15,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,53,sum electric energy production EEP,618,231,77,23,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+12,54,0,132,851,81,28,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+% - age values calculated in Python to front in web app
+10,55,sum energy use homes,1401,330,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,56,15,55,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,57,7,55,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,58,20,55,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,59,36,55,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+10,60,sum energy use others,1398,459,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,61,sum energy use Public,1402,593,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,62,sum energy use Agriculture and forrestry,1366,742,78,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,63,sum energy use Industry,1408,909,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+10,64,sum energy use Transports,1406,1090,49,19,8,3,0,0,0,0,0,0,0,0,0,0,0,0
+1,65,17,60,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,66,21,60,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,67,37,60,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,68,18,61,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,69,22,61,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,70,44,61,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,71,14,62,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,72,30,62,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,73,38,62,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,74,19,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,75,23,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,76,26,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,77,28,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,78,43,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,79,31,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,80,39,63,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,81,24,64,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,82,32,64,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+1,83,40,64,0,0,0,0,0,128,0,-1--1--1,,1|(0,0)|
+///---\\\
+:L<%^E!@
+1:vensim_data_scen4_PeakHourW_Lidköping_ver1.vdfx
+1:vensim_data_scen3_PeakHourW_Lidköping_ver1.vdfx
+1:vensim_data_scen2_PeakHourW_Lidköping_ver1.vdfx
+1:vensim_data_scen1_PeakHourW_Lidköping_ver1.vdfx
+1:vensim_data_PeakHourW_Lidköping_ver1.vdfx
+4:Time
+5:rate new apartment buildings DHP users
+9:vensim_data_scen4_PeakHourW_Lidköping_ver1
+19:100,0
+24:0
+25:120
+26:120
+60:vensim_data_ScenAll_PeakHourW_Lidköping_ver1.csv
+61:65001
+62:1
+63:0
+64:0
+65:1
+66:0
+67:0
+68:0
+69:0
+70:1
+22:People,Persons,Person
+22:Unit,Units
+18:digitalTwinSankey_ScenAll_PH_ver1.vsc
+20:digitalTwinSankey_ver1.lst
+15:0,0,0,0,0,0
+27:0,
+34:0,
+42:1
+72:0
+73:0
+35:Date
+36:YYYY-MM-DD
+37:2000
+38:1
+39:1
+40:2
+41:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:0
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Times New Roman|12||0-0-0|0-0-0|-1--1--1|0-0-0|192-192-192|-1--1--1
