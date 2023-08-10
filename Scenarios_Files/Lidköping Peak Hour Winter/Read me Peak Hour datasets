@@ -1,5 +1,7 @@
 Read me Peak Hour datasets:
 
 These are in the Units MWh for the peak hour in winter!! 
-Yet, the constant variable files can be used, but need to be transformed from GWh to MWh!!
+The peak hour represents the average consumption during that wors hour, hence is still in MWh.
+
+Moreover, the constant variable files can be used, even if they are in GWh, but need to be transformed from GWh to MWh accurately.
 //Gary
