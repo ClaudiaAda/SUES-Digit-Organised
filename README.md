@@ -38,3 +38,7 @@ pip install pandas
 ```
 pip install requests
 ```
+```
+pip install dash-bootstrap-components
+```
+
