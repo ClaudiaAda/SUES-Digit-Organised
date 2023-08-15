@@ -34,7 +34,7 @@ This dictionary is a .json file so is easily loaded with this 2 lines in [info_d
 
 - 2º loaded is a excel file that only contains the names of the energy types, along with the translations in Swedish and corrected English.
 
-This file it is treated to store the energy types' names as the rows of the dataframe, so later we can use this value to find the translation. [Translator]is the dictionary that stores this data.
+This file it is treated to store the energy types' names as the rows of the dataframe, so later we can use this value to find the translation. #Translator is the dictionary that stores this data.
         - `pd.read_csv`(""): Store the csv from the path indicated
         - `pd.DataFrame`(data, columns, index): Create a dataframe (table with the information attached)
 ```python
