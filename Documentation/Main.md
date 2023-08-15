@@ -17,6 +17,7 @@ First of all, the app has to be created:
 app = Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
 ```
 How to run the script in the terminal after running the code:
+
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/3320bff8b989841c40aa48432878c611ab2cf790/Documentation/images/runScript.png)
 
 
