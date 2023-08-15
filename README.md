@@ -41,4 +41,7 @@ pip install requests
 ```
 pip install dash-bootstrap-components
 ```
+```
+pip install dash-bootstrap-components
+```
 
