@@ -27,14 +27,14 @@ And this the official beginner tutorial of 7 min to get used to it. Here, it exp
 Once "Visual Studio Code" is installed, let's use its terminal to install libraries. Copy and paste these instructions:
 
 ```
-$ pip install dash
+pip install dash
 ```
 ```
-$ pip install numpy
+pip install numpy
 ```
 ```
-$ pip install pandas
+pip install pandas
 ```
 ```
-$ pip install requests
+pip install requests
 ```
