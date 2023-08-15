@@ -54,9 +54,7 @@ dcc.Dropdown(
 ```
 
 Let's define the attributes of this component, what they do and what input they need.
-
-```python
-    
+  
 - `id`="string",
 
     The ID of this component, used to identify dash components in callbacks
@@ -77,7 +75,7 @@ Let's define the attributes of this component, what they do and what input they 
 - `placeholder`= "string"
 - `value`= (string | number | boolean) (The value of the input)
 
-```
+
 
 This is how the component will look like in the script:
 
