@@ -40,3 +40,6 @@ pip install pandas
 ```
 pip install requests
 ```
+```
+pip install dash_bootstrap_components
+```
