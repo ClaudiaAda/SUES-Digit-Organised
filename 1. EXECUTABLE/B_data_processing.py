@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from functools import reduce
 
-def build_scen_data(scen_file, year, scenario,value_slider,value_slider2,v_s3,v_s31,v_s4,v_s41,v_s5,v_s6, unit, kommun, language):
+def build_scen_data(scen_file, year, scenario,value_slider,value_slider2,v_s3,v_s31,v_s4,v_s41,v_s5,v_s6, unit, kommun, peak_hour, language):
     
     # LOAD PERMANENT DICTIONARY in info_data
     # (There are 3 types of data: 
@@ -14,15 +14,17 @@ def build_scen_data(scen_file, year, scenario,value_slider,value_slider2,v_s3,v_
         info_data = json.load(dictionary)
 
     # LOAD TRANSLATOR DICTIONARY, later code lines are to use the csv file correctly
-    translator_dictionary = pd.read_csv("F_Sankey_Language_Dictionary.csv")
+    translator_dictionary = pd.read_csv("F_Sankey_Language_Dictionary.csv", delimiter=";")
     rows = list(translator_dictionary["NAMES"])
     data1 = list(translator_dictionary["EN"])  
     translator = pd.DataFrame(data1, columns = ["EN"], index=rows)
     translator["SV"] = list(translator_dictionary["SV"]) 
-    print(translator)
-    print(language)
     # LOAD CONSTANT ENERGIES information it is permanent for all scenarios
     constant_file = pd.read_csv("Scenarios/vensim_data_Constants_" + kommun + "_ver.csv")
+    # Update values for peak_hour cases
+    if peak_hour == ["PeakHour"]:
+        constant_file= constant_file*1000/8760
+    print(constant_file)
 
     # Save the energy types used in each excel file
     constant_variables = list(constant_file.head(0))
@@ -95,7 +97,6 @@ def build_scen_data(scen_file, year, scenario,value_slider,value_slider2,v_s3,v_
         n_row = np.where(scen_file[column1] == value_slider)
         num_row = n_row[0].tolist()
 
-    print(num_row)
     # The sum of production and usage energies 
     s_e_production = scen_file["T" + year + " sum energy production"][num_row[0]]
     s_e_usage = scen_file["T" + year + " sum energy usage"][num_row[0]]
@@ -241,32 +242,46 @@ def build_scen_data(scen_file, year, scenario,value_slider,value_slider2,v_s3,v_
                     """if peak_hour == ['on']:
                         find_value = find_value*3/8760
                         #print("Peak hour")"""
+                    if peak_hour == ["PeakHour"]:
+                        if unit == "giga":
+                            find_value = find_value/1000
+                            #print("Megawatts")
 
-                    if unit == "mega":
-                        find_value = find_value*1000
-                        #print("Megawatts")
+                        elif unit == "kilo":
+                            find_value = find_value*1000
+                            #print("Kilowatts")
+                    else:
+                        if unit == "mega":
+                            find_value = find_value*1000
+                            #print("Megawatts")
 
-                    elif unit == "kilo":
-                        find_value = find_value*1000000
-                        #print("Kilowatts")
+                        elif unit == "kilo":
+                            find_value = find_value*1000000
+                            #print("Kilowatts")
 
                     scen_data["link"]["value"].append(find_value)
                     scen_data["link"]["color"].append(info_data[value_name]["color"])
 
     # Modify values of sum of energies 
-    if unit == "mega":
-        s_e_production = s_e_production*1000
-        s_e_usage = s_e_usage*1000
-        #print("Megawatts")
+    if peak_hour == ["PeakHour"]:
+        if unit == "giga": 
+            s_e_production = s_e_production/1000
+            s_e_usage = s_e_usage/1000
+        elif unit == "kilo":
+            s_e_production = s_e_production*1000
+            s_e_usage = s_e_usage*1000
 
-    elif unit == "kilo":
-        s_e_production = s_e_production*1000000
-        s_e_usage = s_e_usage*1000000
-        #print("Kilowatts")
+    else:
+        if unit == "mega":
+            s_e_production = s_e_production*1000
+            s_e_usage = s_e_usage*1000
+        elif unit == "kilo":
+            s_e_production = s_e_production*1000000
+            s_e_usage = s_e_usage*1000000
 
     s_e_production = round(s_e_production, 2)
     s_e_usage = round(s_e_usage, 2)
 
-    #print(scen_data)
+    print(scen_data)
 
     return (scen_data, s_e_production, s_e_usage)

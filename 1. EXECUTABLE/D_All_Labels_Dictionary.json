@@ -48,7 +48,7 @@
             "sum energy use homes",
             "sum energy use Industry",
             "DHP output",
-            "CGP total energy output to users"         
+            "total CGP energy input"         
         ],
         "value": [
             "bio fuels small houses direct heating green",
@@ -83,7 +83,7 @@
     "CGP use of wastes": {
         "color": "rgba(125,1,2,0.4)",
         "target": [
-            "CGP total energy output to users"
+            "total CGP energy input"
         ],
         "value": [
             "CGP use of wastes"
@@ -93,7 +93,7 @@
     "bio fuels biodrivmedel": {
         "color": "rgba(1,192,193,0.4)",
         "target": [
-            "CGP total energy output to users",
+            "total CGP energy input",
             "sum energy use Agriculture and forrestry",
             "sum energy use Industry",
             "sum energy use Transports"
@@ -110,7 +110,7 @@
         "color": "rgba(92,92,92,0.4)",
         "target": [
             "DHP output",
-            "CGP total energy output to users",
+            "total CGP energy input",
             "sum energy use homes",
             "sum energy use others",
             "sum energy use Public",
@@ -157,51 +157,27 @@
     },
     "DHP sum input energy": {
         "color": "rgba(0,255,1,0.4)",
-        "target": "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target": "link"
     },
     "DHP use of Bio gas": {
         "color": "rgba(62,161,97,0.4)",
-        "target": "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target": "link"
     },
     "DHP use of oil products": {
         "color": "rgba(92,92,92,0.4)",
-        "target":  "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target":  "link"
     },
     "CGP use of bio fuels green": {
         "color": "rgba(0,255,1,0.4)",
-        "target": "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target": "link"
     },   
     "CGP use of bio oil": {
         "color": "rgba(1,192,193,0.4)",
-        "target": "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target": "link"
     },
     "CGP use of oil products": {
         "color": "rgba(92,92,92,0.4)",
-        "target": "link",
-        "value": [
-            ""
-        ],
-        "column": 2
+        "target": "link"
     },
     "DHP output": {
         "color": "rgba(127,128,0,0.4)",
@@ -210,16 +186,25 @@
             "sum energy use homes",
             "sum energy use others",
             "sum energy use Public",
-            "sum energy use Industry"
+            "sum energy use Industry",
+            "DHP internal losses"
         ],
         "value": [
             "distribution losses DHP",
             "DHP homes",
             "DHP others",
             "DHP Public",
-            "DHP industry"
+            "DHP industry",
+            "DHP internal losses"
         ],
         "column": 2
+    },
+    "DHP internal losses": {
+        "color": "rgba(0,0,0,0.4)",
+        "target": "output",
+        "column": 2,
+        "x": 0.67,
+        "y": 0.67
     },
     "electric production CGP": {
         "color": "rgba(255,127,0,0.4)",
@@ -229,17 +214,49 @@
         "value": [
             "electric production CGP"
         ],
-        "column": 2
+        "column": 2,
+        "x": 0.54
     },
     "CGP output excl Electric production": {
         "color": "rgba(127,128,0,0.4)",
         "target": [
-            "distribution losses"
+        "distribution losses",
+        "sum energy use homes",
+        "sum energy use others",
+        "sum energy use Public",
+        "sum energy use Industry"
         ],
         "value": [
-            "distribution losses CGP"
+        "distribution losses CGP",
+        "DHP homes",
+        "DHP others",
+        "DHP Public",
+        "DHP industry"
         ],
-        "column": 2
+        "column": 2,
+        "x": 0.54
+    },
+    "total CGP energy input": {
+        "color": "rgba(127,128,0,0.4)",
+        "target": [
+            "CGP total energy output to users",
+            "CGP internal losses"
+        ],
+        "value": [
+            "CGP total energy output to users",
+            "CGP internal losses"
+        ],
+        "column": 2,
+        "x": 0.3,
+        "y": 0.58
+
+    },
+    "CGP internal losses": {
+        "color": "rgba(0,0,0,0.4)",
+        "target": "output",
+        "column": 2,
+        "y": 0.8,
+        "x": 0.4
     },
     "CGP total energy output to users": {
         "color": "rgba(127,128,0,0.4)",
@@ -252,8 +269,8 @@
             "CGP output excl Electric production"
         ],
         "column": 2,
-        "x": 0.3,
-        "y": 0.58
+        "y": 0.54,
+        "x": 0.4
     },
     "electric energy export": {
         "color": "white",

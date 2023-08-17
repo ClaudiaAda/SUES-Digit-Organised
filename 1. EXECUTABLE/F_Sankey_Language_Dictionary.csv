@@ -1,30 +1,33 @@
-NAMES,EN,SV
-electic energy import,english,elektisk energi import
-electric energy water,english,el energi vatten
-electric energy wind,electric energy wind,otro ejemplo
-electric energy solar,electric energy solar,a
-sum bio fuels green,sum bio fuels green,a
-Propane and natural gas Industry,Propane and natural gas Industry,a
-Bio gas,Bio gas,a
-CGP use of wastes,CGP use of wastes,a
-bio fuels biodrivmedel,bio fuels biodrivmedel,a
-Oil products,Oil products,a
-sum electric energy production EEP,sum electric energy production EEP,a
-DHP sum input energy,DHP sum input energy,a
-DHP use of Bio gas,DHP use of Bio gas,a
-DHP use of oil products,DHP use of oil products,a
-CGP use of bio fuels green,CGP use of bio fuels green,a
-CGP use of bio oil,CGP use of bio oil,a
-CGP use of oil products,CGP use of oil products,a
-DHP output,DHP output,a
-electric production CGP,electric production CGP,a
-CGP output excl Electric production,CGP output excl Electric production,a
-CGP total energy output to users,CGP total energy output to users,a
-electric energy export,electric energy export,a
-distribution losses,distribution losses,a
-sum energy use homes,sum energy use homes,a
-sum energy use others,sum energy use others,a
-sum energy use Public,sum energy use Public,a
-sum energy use Agriculture and forrestry,sum energy use Agriculture and forrestry,a
-sum energy use Industry,sum energy use Industry,a
-sum energy use Transports,sum energy use Transports,a
+NAMES;EN;SV
+electic energy import;electic energy import;elektisk energi import
+electric energy water;electric energy water;el energi vatten
+electric energy wind;electric energy wind;otro ejemplo
+electric energy solar;electric energy solar;a
+sum bio fuels green;sum bio fuels green;a
+Propane and natural gas Industry;Propane and natural gas Industry;a
+Bio gas;Bio gas;a
+CGP use of wastes;CGP use of wastes;a
+bio fuels biodrivmedel;bio fuels biodrivmedel;a
+Oil products;Oil products;a
+sum electric energy production EEP;sum electric energy production EEP;a
+DHP sum input energy;DHP sum input energy;a
+DHP use of Bio gas;DHP use of Bio gas;a
+DHP use of oil products;DHP use of oil products;a
+CGP use of bio fuels green;CGP use of bio fuels green;a
+CGP use of bio oil;CGP use of bio oil;a
+CGP use of oil products;CGP use of oil products;a
+DHP output;DHP output;a
+electric production CGP;electric production CGP;a
+CGP output excl Electric production;CGP output excl Electric production;a
+CGP total energy output to users;CGP total energy output to users;a
+electric energy export;electric energy export;a
+distribution losses;distribution losses;a
+sum energy use homes;sum energy use homes;a
+sum energy use others;sum energy use others;a
+sum energy use Public;sum energy use Public;a
+sum energy use Agriculture and forrestry;sum energy use Agriculture and forrestry;a
+sum energy use Industry;sum energy use Industry;a
+sum energy use Transports;sum energy use Transports;a
+DHP internal losses;DHP internal losses;a
+CGP internal losses;CGP internal losses;a
+total CGP energy input;total CGP energy input;a
