@@ -10,7 +10,7 @@ There are two main sections: the upper part where the components are to choose t
 
 #### See the web divisions in the picture below: 
 
-![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/dc53b8f1cefbc940fb2611fcc3a23edf835d9a92/Documentation/images/divisions.png)
+![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff993f3fb014b8aa6d83c0ca9896f348bc953900/Documentation/images/divisions.png)
 
 First of all, the app has to be created:
 > How to declare an app:
