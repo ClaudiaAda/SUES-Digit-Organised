@@ -5,6 +5,7 @@ In this file it is going to explain some of the possible errors that can appear 
 If in the webpage appears an error like this:
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/images/error1.png)
+
 If it says "list index out of range", it is usually because it could not read the excel file. This can happen because the delimiters changed.
 
 For [scenarios](https://github.com/ClaudiaAda/SUES-Digit-Organised/tree/main/1.%20EXECUTABLE/Scenarios), the delimiter has to be ",". Sometimes, when this files are open in excel and then save it, the delimiter will change to ";" so it won't be able to be opened in the program later. If it is wanted to change the delimiter from "," to ";" of all scenarios files, it is necessary to change this lines in [A_main](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/A_main.py) so the program can work (add: delimiter=";")
