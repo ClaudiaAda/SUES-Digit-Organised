@@ -20,9 +20,10 @@ It could be implemented using the university's servers as a host.
 
 ## Summer/Winter Peak Hours Options
 
-Once you have the .csv files with all the peak hour data in all possible scenarios, those data should be divided into the two cases (worst time in summer and worst time in winter). 
+Once you have the .csv files with all the peak hour data in all possible scenarios upload them into the "Scenarios" folder. It is important that the name of these files follows the standardisation: 
 
-Another option would be to develop a method to search for those worst hours in the new general data of peak hour and find out which is summer and which is winter.
+For constants:
+> vensim_data_Constants_#kommun_ver.csv
 
 ## Internal losses target
 
@@ -38,7 +39,7 @@ One idea would be to add images depending on the region you select in the sankey
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/e6221335a0c52af26fa76ccd5a5f988d22eefb0e/Documentation/images/hovertemplate.png)
 
-### Names in the Sankey 
+### Show values next to the Sankey 
 
 ## Improve in general the code 
 
