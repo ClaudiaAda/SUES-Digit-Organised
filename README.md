@@ -9,21 +9,21 @@ This repository contains the programs and files needed to execute the webpage th
 The documentation for the files used cann be found in the [Documentation/](Documentation) directory.
 In this pages it is explained how the different code files work.
 
-    - [01-Main.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/01_Main.md)
+- [01-Main.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/01_Main.md)
     
-    - [02-SankeyDiagram.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/02_SankeyDiagram.md)
+- [02-SankeyDiagram.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/02_SankeyDiagram.md)
     
-    - [03-DataProcessing.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/03_DataProcessing.md)
+- [03-DataProcessing.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/03_DataProcessing.md)
     
 This is to explain the manual dictionaries needed to make the program work properly.
 
-    - [04_DictionariesDocumentation.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/04_DictionariesDocumentation.md)
+- [04_DictionariesDocumentation.md](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/04_DictionariesDocumentation.md)
     
 Here, they are proposed some possible improvements and how to implement them. As well as, possible errors that can appear when executing or implementing new features.
 
-    - [05-PossibleImprovements.md]()
+- [05-PossibleImprovements.md]()
     
-    - [06-PossibleErrorsAndSolutions.md]
+- [06-PossibleErrorsAndSolutions.md]
 
 ## Installation
 This program is written in Python. A confortable way to execute and edit it is by using Code Editor : "Visual Studio Code".
