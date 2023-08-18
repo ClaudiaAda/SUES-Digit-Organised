@@ -47,9 +47,13 @@ pip install dash_bootstrap_components
 
 - Download the project from github in .zip format. Unzip it.
 
-- Open Visual Studio Code. ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff8264e85e8b7427397ec1089e9782e9d07af910/Documentation/images/visualStudio.png)
+- Open Visual Studio Code.
 
-- Open the folder: `Final Folder` ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff8264e85e8b7427397ec1089e9782e9d07af910/Documentation/images/OpenFolder.png)
+![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff8264e85e8b7427397ec1089e9782e9d07af910/Documentation/images/visualStudio.png)
+
+- Open the folder: `Final Folder`
+
+![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff8264e85e8b7427397ec1089e9782e9d07af910/Documentation/images/OpenFolder.png)
 
 Open the path to the `Executables folder` as shown in the following image:
 
