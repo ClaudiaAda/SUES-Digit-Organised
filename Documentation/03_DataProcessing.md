@@ -1,5 +1,5 @@
 # DATA PROCESSING - [B_data_processing](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/B_data_processing.py)
-Most complex file, it is were data (excels files) from vensim are treated along manual dictionaries to create dictionary "scen_data" so this data matches [Sankey function](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/SankeyDiagram.md).
+Most complex file, it is where the data from the different [scenarios](https://github.com/ClaudiaAda/SUES-Digit-Organised/tree/main/1.%20EXECUTABLE/Scenarios) (excels files) from vensim are treated along manual dictionaries to create dictionary "scen_data" so this data matches [Sankey function](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/02_SankeyDiagram.md)).
 
 ### Libraries
 Libraries used are:
@@ -12,7 +12,7 @@ from functools import reduce
 
 ## FUNCTION
 ### Declaration
-This function has to receive the excel file from vensim and different parameters chosen in the web page, this inputs are obtained from [main file](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/SankeyDiagram.md).
+This function has to receive the excel file from vensim and different parameters chosen in the web page, this inputs are obtained from [main file](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/01_Main.md).
 
 As result of the function, it will sent "scen_data" and the values of the sum of energies from the production and usage.
 ```python
@@ -24,9 +24,9 @@ return (scen_data, s_e_production, s_e_usage)
 As this function it is very large, let's split in different sections: load and treat data dictionaries, obtain row's position to take the correct value, declaration of node's data, declaration of link's data.
 
 ### Load and treat data dictionaries
-- 1º loaded dictionary is [All_Labels_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/D_All_Labels_Dictionary.json) to know more about how the dictionaries are organised and how to add new information see [Manual_Dictionary_Documentation]().
+- 1º loaded dictionary is [All_Labels_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/D_All_Labels_Dictionary.json) to know more about how the dictionaries are organised and how to add new information see [04_DictionariesDocumentation](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/04_DictionariesDocumentation.md).
 
-This dictionary is a .json file so is easily loaded with this 2 lines in [info_data].
+This dictionary is a .json file so is easily loaded with this 2 lines in "info_data".
 ```python
 with open("Latest Folder/D_All_Labels_Dictionary.json") as dictionary:
         info_data = json.load(dictionary)
