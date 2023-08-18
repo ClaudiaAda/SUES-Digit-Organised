@@ -1,11 +1,11 @@
 # DICTIONARIES
-To allow the creation of data that can be used by the Sankey function, it is needed to have a dictionary that stores the information of the energy types (name, colour, connections, positions,..): [D_All_labels_dictionary]
+To allow the creation of data that can be used by the Sankey function, it is needed to have a dictionary that stores the information of the energy types (name, colour, connections, positions,..): [D_All_labels_dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/D_All_Labels_Dictionary.json)
 
-On the other hand, to handle translations to swedish or better english, it is used to tables/excel files to store this translations. One for the web page [E_Language_Dictionary] and other for the energy labels inside the Sankey [F_Sankey_Language_Dictionary].
+On the other hand, to handle translations to swedish or better english, it is used to tables/excel files to store this translations. One for the web page [E_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/E_Language_Dictionary.csv) and other for the energy labels inside the Sankey [F_Sankey_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/F_Sankey_Language_Dictionary.csv).
 
 Next, it is explained how the information is displayed and how to add new elements to them.
 
-## D_All_labels_dictionary (delimeter=",")
+## [D_All_labels_dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/E_Language_Dictionary.csv) (delimeter=",")
 It is a dictionary of dictionaries. It has the information of ALL existing energy types of all municipalities. It is where add new information if new energy types or municipalities are implemented.
 
 First keys are the names of the energy types (🚧 THE NAMES USED IN VENSIM, the ones that will appear as column names in the excel files generated 🚧).
@@ -109,7 +109,7 @@ For [D_All_Labels_Dictionary], it is important to have some points on mind to ad
  - 3. Location: It is important to place correctly the new energies inside the dictionary because the order from top to bottom in which energies are displayed in the Sankey depend of this position in the dictionary. In reality, you have to be aware of the "relative" positions, to put it before or after of the energies that have the same column number.
 
 
-## E_Language_Dictionary (delimeter=";")
+## [E_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/E_Language_Dictionary.csv) (delimeter=";")
 It is a table(excel file) that stores the names of the web page elements. It has 3 columns: "ID","EN","SV".
 
 In ID is saved the id of the object, in the other columns is the correspondient text in each language (English and Swedish).
@@ -130,8 +130,8 @@ If a new web page object it is added [A_main] file and it is wanted that the tex
 
 🚧It is important that the order of the ids in "ID" column in the excel file matches the order in which they are call in the callback (Outputs order).🚧
 
-## F_Sankey_Language_Dictionary (delimeter=";")
-The names of the energies display in the Sankey are saved in this other table. It has 3 columns: "NAMES","EN","SV". 
+## [F_Sankey_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/F_Sankey_Language_Dictionary.csv) (delimeter=";")
+The names of the energies displayed in the Sankey are saved in this other table. It has 3 columns: "NAMES","EN","SV". 
 
 ### 🚧 HOW TO ADD NEW ELEMENTS?
 After adding a new energy to [D_All_Labels_Dictionary] the name has to be added to this dictionary. The order of the names does not matter, but 🚧it is important that in the column "NAMES" it is saved the same name as the one used in Vensim🚧. In the other 2 columns, it is store the name that is wanted to be displayed for each language. 
