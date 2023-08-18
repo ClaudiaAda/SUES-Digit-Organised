@@ -3,6 +3,7 @@ In this file it is going to explain some of the possible errors that can appear 
 
 ## Errors with excel files
 If in the webpage appears an error like this:
+
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/images/error1.png)
 If it says "list index out of range", it is usually because it could not read the excel file. This can happen because the delimiters changed.
 
@@ -28,6 +29,7 @@ For [E_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/b
 
 ## Errors with no existing files
 Sometimes it can appear errors in the web page because it is possible to select all features for all options, but it not all options exists. For example, Scen5 and Scen6 do not have peak_hour information, so if you select them this error will happen.
+
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/images/error2.png)
 
 ## Errors when adding new energies
