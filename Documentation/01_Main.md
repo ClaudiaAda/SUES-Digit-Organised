@@ -1,4 +1,4 @@
-# Main 
+# Main - [A_main](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/A_main.py)
 
 In this file the visualisation of the Sanky diagram and the graphical interface of the web page is done. It is the main file from which other files and functions are called. 
 Dash and Plotly libraries are used for building a analytical web application with an interactive dashboard in Python.
