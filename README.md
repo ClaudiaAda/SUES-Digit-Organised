@@ -55,14 +55,14 @@ pip install dash_bootstrap_components
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/ff8264e85e8b7427397ec1089e9782e9d07af910/Documentation/images/OpenFolder.png)
 
-Open the path to the `Executables folder` as shown in the following image:
+Open the path to the `Executable folder` as shown in the following image:
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/078f5d7bc671c3fdedaac770d2fc455eccf1e787/Documentation/images/OpenFolder2.png)
 
-- To run the code you have to open the file `A_main.py`(METER URL) and press `Run Python File`
+- To run the code you have to open the file [A_main.py](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/9db065e34b31415f3882853da31df71e24c3be1c/1.%20EXECUTABLE/A_main.py) and press `Run Python File`
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/7786b9b7ecb4ccbda4e74b6f7fab96a29647be5d/Documentation/images/runpythonfile.png)
 
-- ctrl+Click the link as it is shown to open the web interface
+- Ctrl+Click the link as it is shown to open the web interface
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/3320bff8b989841c40aa48432878c611ab2cf790/Documentation/images/runScript.png)
