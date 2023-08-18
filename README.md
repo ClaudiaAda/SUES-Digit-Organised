@@ -24,7 +24,7 @@ And this the official beginner tutorial of 7 min to get used to it. Here, it exp
 
 (Also, to learn more about Python, we have found that there are quite good tutorials in Linkedin Learning.)
 
-Once "Visual Studio Code" is installed, let's use its terminal to install libraries. Copy and paste these instructions:
+Once "Visual Studio Code" is installed, let's use its terminal to install libraries. Copy and paste these instructions in the Visual Studio Code terminal:
 
 ```
 pip install dash
@@ -63,6 +63,8 @@ Open the path to the `Executable folder` as shown in the following image:
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/7786b9b7ecb4ccbda4e74b6f7fab96a29647be5d/Documentation/images/runpythonfile.png)
 
-- Ctrl+Click the link as it is shown to open the web interface
+- `Ctrl+Click` the link as it is shown to open the web interface
 
 ![](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/3320bff8b989841c40aa48432878c611ab2cf790/Documentation/images/runScript.png)
+
+### 🚧IMPORTANT!!! To stop the simulation of the code, type `Ctrl+C` in the Visual Studio Code terminal
