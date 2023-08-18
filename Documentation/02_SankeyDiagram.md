@@ -1,7 +1,7 @@
-# SANKEY DIAGRAM
+# SANKEY DIAGRAM - [C_sankey_diagram](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/C_sankey_diagram.py)
 #### See the [Sankey Diagram in Python](https://plotly.com/python/sankey-diagram/) in the Plotly official documentation for more information.
 
-This file basically takes the previous treated data in [B_data_processing](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/B_data_processing.py) and assigns it to each parameter of Sankey's function. 
+This file basically takes the previously treated data in [B_data_processing](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/03_DataProcessing.md) and assigns it to each parameter of Sankey's function. 
 
 ## Overview
 
