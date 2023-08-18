@@ -43,4 +43,7 @@ pip install dash_bootstrap_components
 ```
 
 ## How to start the app
+- 1º loaded dictionary is 
+
+- 2º loaded is a excel file that only contains the names of the energy types, along with the translations in Swedish and corrected English.
 
