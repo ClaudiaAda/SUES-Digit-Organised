@@ -112,6 +112,7 @@ app.layout = html.Div(
                                                         },                                                      
                                                     ],
                                                     value = "EN",
+                                                    clearable=False,
                                                 ),
                                             ]
                                         )
@@ -224,9 +225,9 @@ app.layout = html.Div(
                                             children = [
                                                 dcc.Checklist(
                                                     style = {"font-weight": "bold" },
-                                                    id='peak_value',
+                                                    id="peak_value",
                                                     options=[
-                                                        {'label':html.Span(id="peak_hour", children='Peak hour:'), 'value': "PeakHourW"},
+                                                        {'label':html.Span(id="peak_hour", children='Peak hour:'), 'value': "PeakHour"},
                                                     ],
                                                                                                                                                              
                                                 ),                                                
@@ -234,27 +235,29 @@ app.layout = html.Div(
                                                 id = "wintersummer",
                                                 style = {'display' : 'none'},
                                                 children = [
-                                                    dcc.RadioItems([                                                    
-                                                            {
-                                                                "label":
-                                                                    [
-                                                                        html.Img(src="/assets/winter.png",height=30),
-                                                                        html.Span(id="winter", children=" Winter"),
-                                                                    ],
-                                                                "value": "Winter",
-                                                            },
-                                                            {
-                                                                "label":
-                                                                    [
-                                                                        html.Img(src="/assets/Sun.png",height=30),
-                                                                        html.Span(id="summer", children=" Summer"),
-                                                                    ], 
-                                                                "value": "Summer",
-                                                            },
-                                                            
-                                                        ], 
+                                                    dcc.RadioItems(
+                                                        id='winter_summer_value',
+                                                        options=[                                                   
+                                                                {
+                                                                    "label":
+                                                                        [
+                                                                            html.Img(src="/assets/winter.png",height=30),
+                                                                            html.Span(id="winter", children=" Winter"),
+                                                                        ],
+                                                                    "value": "W",
+                                                                },
+                                                                {
+                                                                    "label":
+                                                                        [
+                                                                            html.Img(src="/assets/Sun.png",height=30),
+                                                                            html.Span(id="summer", children=" Summer"),
+                                                                        ], 
+                                                                    "value": "S",
+                                                                },         
+                                                            ], 
                                                         inline=True, 
                                                         labelStyle={ "align-items": "center"},
+                                                        value = "W"
                                                     ),
                                                 ],
                                                 ),
@@ -274,6 +277,8 @@ app.layout = html.Div(
                                                 html.Label(id="scenario_description", children="Choose a scenario:",style = {"font-weight": "bold" },),
                                                 dcc.Dropdown(
                                                     id = "scenario_menu",
+                                                    optionHeight = 20,
+                                                    maxHeight = 500,
                                                     options = [
                                                         {'label' : [html.Span(id="scen1", children ='Scenario 1 - Ratio of EVs')], 'value' : "1" },
                                                         {'label' : [html.Span(id="scen2", children ='Scenario 2 - New industry establishment NIE')], 'value' : "2" },
@@ -284,6 +289,7 @@ app.layout = html.Div(
                                                         {'label' : [html.Span(id="scenAll", children ='Scenario All')], 'value' : "All" }
                                                     ],
                                                     placeholder = 'Select a scenario...',
+                                                    value= "1"
                                                 )
                                             ]
                                         )
@@ -303,7 +309,8 @@ app.layout = html.Div(
                                                         {'label' : 'MWh', 'value' : 'mega' },
                                                         {'label' : 'GWh', 'value' : 'giga' }
                                                     ],
-                                                    value='giga'
+                                                    value='giga',
+                                                    clearable=False,
                                                 )
                                             ]
                                         )
@@ -385,7 +392,7 @@ app.layout = html.Div(
                                                             min=0,
                                                             max=1,
                                                             step=0.05,
-                                                            value=[None,None],
+                                                            value=[0,0]
                                                         ),
                                                     ]
                                                 ),
@@ -398,8 +405,7 @@ app.layout = html.Div(
                                                             min=0,
                                                             max=1,
                                                             step=0.25,
-                                                            value=[None,None],
-                                                            
+                                                            value=[0,0]
                                                         ),
                                                     ]
                                                 ),    
@@ -412,42 +418,42 @@ app.layout = html.Div(
                                                             min=100,
                                                             max=300,
                                                             step=100,
-                                                            value=[None,None],
+                                                            value=[100,100]
                                                         ), 
                                                         dcc.RangeSlider(
                                                             id="31",
                                                             min=0.5,
                                                             max=1,
                                                             step=0.25,
-                                                            value=[None,None],
+                                                            value=[0.5,0.5]
                                                         ),
                                                         dcc.RangeSlider(
                                                             id="4",
                                                             min=0.96,
                                                             max=1,
                                                             step=0.04,
-                                                            value=[None,None],                                                   
+                                                            value=[0.96,0.96]                                                  
                                                         ),
                                                         dcc.RangeSlider(
                                                             id="41",
                                                             min=0.75,
                                                             max=1,
                                                             step=0.25,
-                                                            value=[None,None],   
+                                                            value=[0.75,0.75]
                                                         ),
                                                         dcc.RangeSlider(
                                                             id="5",
                                                             min=6,
                                                             max=12,
                                                             step=3,
-                                                            value=[None,None],
+                                                            value=[6,6],
                                                         ),
                                                         dcc.RangeSlider(
                                                             id="6",
                                                             min=0,
                                                             max=2,
                                                             step=1,
-                                                            value=[None,None],
+                                                            value=[0,0]
                                                         ),
                                                     ]
                                                 )                                                
@@ -455,6 +461,45 @@ app.layout = html.Div(
                                         ),
                                     ], 
                                     xs=7, sm=7, md=7, lg=7, xl=7, xxl=7
+                                ),
+                            ]
+                        ),
+                        dbc.Row(
+                            [
+                                html.P(
+                                    id = "Scenario_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 1",
+                                ),
+                                html.P(
+                                    id = "Scenario2_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 2",
+                                ),
+                                html.P(
+                                    id = "Scenario3_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 3",
+                                ),
+                                html.P(
+                                    id = "Scenario4_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 4",
+                                ),
+                                html.P(
+                                    id = "Scenario5_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 5",
+                                ),
+                                html.P(
+                                    id = "Scenario6_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of scenario 6",
+                                ),
+                                html.P(
+                                    id = "ScenarioAll_text_description",
+                                    style = {'display':'none'},
+                                    children = "Description of all scenarios ",
                                 ),
                             ]
                         ),
@@ -594,13 +639,71 @@ language_dictionary = pd.read_csv("E_Language_Dictionary.csv", delimiter=';')
     Output("slider2_scale41", "children"),
     Output("slider2_scale5", "children"),
     Output("slider2_scale6", "children"),
-    
+    Output("Scenario_text_description", "children"),
+    Output("Scenario2_text_description", "children"),
+    Output("Scenario3_text_description", "children"),
+    Output("Scenario4_text_description", "children"),
+    Output("Scenario5_text_description", "children"),
+    Output("Scenario6_text_description", "children"),
+    Output("ScenarioAll_text_description", "children"),
 
     Input("language_option", "value"),
 )
 
 def language_translator(language):
     return [language_dictionary[language][word] for word in range(len(language_dictionary["ID"]))]
+
+
+@app.callback(
+    Output("Scenario_text_description", "style"),
+    Output("Scenario2_text_description", "style"),
+    Output("Scenario3_text_description", "style"),
+    Output("Scenario4_text_description", "style"),
+    Output("Scenario5_text_description", "style"),
+    Output("Scenario6_text_description", "style"),
+    Output("ScenarioAll_text_description", "style"),
+
+    Input("scenario_menu", "value"),
+    Input("Scenario_text_description", "style"),
+    Input("Scenario2_text_description", "style"),
+    Input("Scenario3_text_description", "style"),
+    Input("Scenario4_text_description", "style"),
+    Input("Scenario5_text_description", "style"),
+    Input("Scenario6_text_description", "style"),
+    Input("ScenarioAll_text_description", "style"),
+)
+
+def update_scenario_text_description(value, style1, style2, style3, style4, style5, style6, styleAll):    
+    if value == "1":
+        style1 = {'display' : 'block',"border": "1px grey solid "}
+        style2 = style3 = style4 = style5 = style6 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "2": 
+        style2 = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style3 = style4 = style5 = style6 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "3": 
+        style3 = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style2 = style4 = style5 = style6 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "4": 
+        style4 = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style2 = style3 = style5 = style6 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "5": 
+        style5 = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style2 = style3 = style4 = style6 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "6": 
+        style6 = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style2 = style3 = style4 = style5 = styleAll = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    if value == "All": 
+        styleAll = {'display' : 'block',"border": "1px grey solid "}
+        style1 = style2 = style3 = style4 = style5 = style6 = {'display':'none'}
+        return style1, style2, style3, style4, style5, style6, styleAll
+    
+    
 
 @app.callback(
     Output("slider_scale", "children"),
@@ -647,152 +750,254 @@ def language_translator(language):
     )
 
 def update_output(value,min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6, language):
-    if language == 'EN':
-        if value == "1": 
-            style = style_slider = {'display':'none'}
-            style2 = style_slider2 = {'display':'none'} 
-            min=0
-            max=1
-            step=0.05
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
+    if(value is None):
+        raise PreventUpdate
+        return
+    
+    else:
+        if language == 'EN':
+            if value == "1": 
+                style = style_slider = {'display':'none'}
+                style2 = style_slider2 = {'display':'none'} 
+                min=0
+                max=1
+                step=0.05
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Ratio of EVs", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6) 
+            if value == "2": 
+                style = style_slider = {'display':'none'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=3
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
             
-            return (f"Ratio of EVs", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6) 
-        if value == "2": 
-            style = style_slider = {'display':'none'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=3
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
+                return (f"New industry establishment NIE", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)   
+            if value == "3":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=300
+                step=25
+                min2=0
+                max2=1
+                step2=0.25
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"New houses", style, f"Ratio new houses DHP user", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "4":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 ={'display':'none'}
+                min=0.96
+                max=1
+                step=0.01
+                min2=0.2
+                max2=1
+                step2=0.1
+                val = [0.96,0.96]
+                val2 = [0.2,0.2]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
             
-            return (f"New industry establishment NIE", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)   
-        if value == "3":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=300
-            step=25
-            min2=0
-            max2=1
-            step2=0.25
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"New houses", style, f"Ratio new houses DHP user", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "4":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 ={'display':'none'}
-            min=0.96
-            max=1
-            step=0.01
-            min2=0.2
-            max2=1
-            step2=0.1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-        
-            return (f"Goal ratio DHP users apartment buildings", style, f"Goal ratio DHP users small houses", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "5":  
-            style = style_slider ={'display':'none'}
-            style2 = style_slider2 ={'display':'none'}
-            min=0
-            max=12
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
+                return (f"Goal ratio DHP users apartment buildings", style, f"Goal ratio DHP users small houses", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "5":  
+                style = style_slider ={'display':'none'}
+                style2 = style_slider2 ={'display':'none'}
+                min=0
+                max=12
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
 
-            return (f"Number large solar panel projects", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2,val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "6":  
-            style = style_slider ={'display':'none'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=2
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
+                return (f"Number large solar panel projects", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2,val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "6":  
+                style = style_slider ={'display':'none'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=2
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Number large wind mill projects", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "All":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 = {'display':'block'}
+                min=0.5
+                max=1
+                step=0.25  
+                min2=0
+                max2=2
+                step2=1
+                val = [0.5,0.5]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Ratio of EVs", style, f"New industry establishment NIE", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6 )
+        if language == 'SV':
+            if value == "1": 
+                style = style_slider = {'display':'none'}
+                style2 = style_slider2 = {'display':'none'} 
+                min=0
+                max=1
+                step=0.05
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Förhållande mellan EV", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6) 
+            if value == "2": 
+                style = style_slider = {'display':'none'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=3
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Etablering av ny industri NIE", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)   
+            if value == "3":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=300
+                step=25
+                min2=0
+                max2=1
+                step2=0.25
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
             
-            return (f"Number large wind mill projects", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "All":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 = {'display':'block'}
-            min=0.5
-            max=1
-            step=0.25  
-            min2=0
-            max2=2
-            step2=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
+                return (f"Nya hus", style, f"Förhållande nya hus DHP-användare", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "4":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 ={'display':'none'}
+                min=0.96
+                max=1
+                step=0.01
+                min2=0.2
+                max2=1
+                step2=0.1
+                val = [0.96,0.96]
+                val2 = [0.2,0.2]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
             
-            return (f"Ratio of EVs", style, f"New industry establishment NIE", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6 )
-    if language == 'SV':
-        if value == "1": 
-            style = style_slider = {'display':'none'}
-            style2 = style_slider2 = {'display':'none'} 
-            min=0
-            max=1
-            step=0.05
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"Förhållande mellan EV", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6) 
-        if value == "2": 
-            style = style_slider = {'display':'none'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=3
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"Etablering av ny industri NIE", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)   
-        if value == "3":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=300
-            step=25
-            min2=0
-            max2=1
-            step2=0.25
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"Nya hus", style, f"Förhållande nya hus DHP-användare", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "4":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 ={'display':'none'}
-            min=0.96
-            max=1
-            step=0.01
-            min2=0.2
-            max2=1
-            step2=0.1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-        
-            return (f"Målkvot DHP användare flerbostadshus", style, f"Målkvot DHP användare småhus", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "5":  
-            style = style_slider ={'display':'none'}
-            style2 = style_slider2 ={'display':'none'}
-            min=0
-            max=12
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-
-            return (f"Antal stora solpanelsprojekt", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2,val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "6":  
-            style = style_slider ={'display':'none'}
-            style2 = style_slider2 = {'display':'none'}
-            min=0
-            max=2
-            step=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"Antal stora vindkraftsprojekt", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
-        if value == "All":  
-            style = style_slider ={'display':'block'}
-            style2 = style_slider2 = {'display':'block'}
-            min=0.5
-            max=1
-            step=0.25  
-            min2=0
-            max2=2
-            step2=1
-            val = val2 = val3 = val31 = val4 = val41 = val5 = val6 = [None,None]
-            
-            return (f"Förhållande mellan EV", style, f"Etablering av ny industri NIE", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6 )
+                return (f"Målkvot DHP användare flerbostadshus", style, f"Målkvot DHP användare småhus", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "5":  
+                style = style_slider ={'display':'none'}
+                style2 = style_slider2 ={'display':'none'}
+                min=0
+                max=12
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                return (f"Antal stora solpanelsprojekt", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2,val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "6":  
+                style = style_slider ={'display':'none'}
+                style2 = style_slider2 = {'display':'none'}
+                min=0
+                max=2
+                step=1
+                val = [0,0]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Antal stora vindkraftsprojekt", style, f"", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6)
+            if value == "All":  
+                style = style_slider ={'display':'block'}
+                style2 = style_slider2 = {'display':'block'}
+                min=0.5
+                max=1
+                step=0.25  
+                min2=0
+                max2=2
+                step2=1
+                val = [0.25,0.25]
+                val2 = [0,0]
+                val3 = [100,100]
+                val31 = [0.5,0.5]
+                val4 = [0.96,0.96]
+                val41 = [0.75,0.75]
+                val5 = [6,6]
+                val6 = [0,0]
+                
+                return (f"Förhållande mellan EV", style, f"Etablering av ny industri NIE", style2, style_slider, style_slider2, min, max, step, min2, max2, step2, val, val2, val3, val31, val4, val41, val5, val6 )
 
 
         
@@ -800,20 +1005,22 @@ def update_output(value,min, max, step, min2, max2, step2, val, val2, val3, val3
 @app.callback(
     Output("unit", "options"),
     Output("wintersummer", "style"),
-    Input("peak_value", "value")
+    Output("unit", "value"),
+    Input("peak_value", "value"),
 )
 
 def unit_menu(value):
     
-    if value == ['PeakHourW']:
+    if value == ['PeakHour']:
         options = [
             {'label' : 'kW', 'value' : 'kilo' },
             {'label' : 'MW', 'value' : 'mega' },
             {'label' : 'GW', 'value' : 'giga' }
         ]
         style = {'display':'block'}
+        value2 = 'mega'
 
-        return options, style
+        return options, style, value2
     else: 
         options = [
             {'label' : 'kWh', 'value' : 'kilo' },
@@ -821,8 +1028,9 @@ def unit_menu(value):
             {'label' : 'GWh', 'value' : 'giga' }
         ]
         style = {'display':'none'}
+        value2 = 'giga'
 
-        return options, style
+        return options, style, value2
     
 
 @app.callback(
@@ -838,7 +1046,7 @@ def unit_menu(value):
 
 def update_sum_unit(check_item, units, language):
     if language == 'EN':
-        if check_item == ['PeakHourW']: 
+        if check_item == ['PeakHour']: 
             if units == 'kilo':
                 return f"Sum Energy Production (kW):", f"Sum Energy Usage (kW):", f"Sum Energy Production 2 (kW):", f"Sum Energy Usage 2 (kW):", f"kW"
             if units == 'mega':
@@ -853,7 +1061,7 @@ def update_sum_unit(check_item, units, language):
             if units == 'giga':
                 return  f"Sum Energy Production (GWh):", f"Sum Energy Usage (GWh):", f"Sum Energy Production 2 (GWh):", f"Sum Energy Usage 2 (GWh):", f"GWh"
     if language == 'SV':
-            if check_item == ['PeakHourW']: 
+            if check_item == ['PeakHour']: 
                 if units == 'kilo':
                     return f"Summa Energiproduktion (kW):", f"Summa energianvändning (kW):", f"Summa Energiproduktion 2 (kW):", f"Summa energianvändning 2 (kW):", f"kW"
                 if units == 'mega':
@@ -891,12 +1099,13 @@ def update_sum_unit(check_item, units, language):
     Input("peak_value", "value"),
     Input("unit", "value"),
     Input("actual_unit", "children"),
-    Input("language_option", "value")
+    Input("language_option", "value"),
+    Input("winter_summer_value", "value"),
 )
 
-def display_sankey(kommun,scenario,years,value_slider,value_slider2,v_s3,v_s31,v_s4,v_s41,v_s5,v_s6, peak_hour, unit, actual_unit, language):
+def display_sankey(kommun,scenario,years,value_slider,value_slider2,v_s3,v_s31,v_s4,v_s41,v_s5,v_s6, peak_hour, unit, actual_unit, language, winter_summer):
 
-    if (kommun is None) or (scenario is None) or (years is None) or (value_slider is None):
+    if (kommun is None) or (scenario is None) or (years is None):
         raise PreventUpdate
         return
     
@@ -928,16 +1137,17 @@ def display_sankey(kommun,scenario,years,value_slider,value_slider2,v_s3,v_s31,v
         print(language_dictionary)
         #print(info_scenarios_cases[kommun][scenario])
 
+        # Save the correct excel file
+        #scen_file = pd.read_csv("Latest Folder\Scenarios/vensim_data_Scen1_Skara_ver4.csv")
 
-        #if peak_hour == ['PeakHourW'] or ['PeakHourS'] :
-        if peak_hour == ['PeakHourW']:
-            scen_file = pd.read_csv("Scenarios/vensim_data_Scen"+scenario+"_"+peak_hour[0]+"_"+kommun+"_ver.csv" )
+        if peak_hour == ['PeakHour']:
+            scen_file = pd.read_csv("Scenarios/vensim_data_Scen"+scenario+"_"+peak_hour[0]+winter_summer+"_"+kommun+"_ver.csv" )
         else:
             scen_file = pd.read_csv("Scenarios/vensim_data_Scen"+scenario+"_"+kommun+"_ver.csv" )
 
         # Create a dictionary with the information selected 
-        (scen_data, s_e_production, s_e_usage) = build_scen_data(scen_file, years, scenario,value_slider[0],value_slider2[0],v_s3[0],v_s31[0],v_s4[0],v_s41[0],v_s5[0],v_s6[0],unit, kommun, language)
-        (scen_data2, s_e_production2, s_e_usage2) = build_scen_data(scen_file, years, scenario,value_slider[1],value_slider2[1],v_s3[1],v_s31[1],v_s4[1],v_s41[1],v_s5[1],v_s6[1], unit, kommun, language)
+        (scen_data, s_e_production, s_e_usage) = build_scen_data(scen_file, years, scenario,value_slider[0],value_slider2[0],v_s3[0],v_s31[0],v_s4[0],v_s41[0],v_s5[0],v_s6[0],unit, kommun, peak_hour, language)
+        (scen_data2, s_e_production2, s_e_usage2) = build_scen_data(scen_file, years, scenario,value_slider[1],value_slider2[1],v_s3[1],v_s31[1],v_s4[1],v_s41[1],v_s5[1],v_s6[1], unit, kommun, peak_hour, language)
 
         # Lines to compare values between 2 sankeys and highlight the differences making them more opaque
         for a in range(len(scen_data["link"]["value"])):

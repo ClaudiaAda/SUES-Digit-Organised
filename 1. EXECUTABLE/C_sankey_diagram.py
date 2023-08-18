@@ -17,7 +17,7 @@ def build_sankey(scen_data,actual_unit):
             color =  scen_data["node"]['color'],
             x = scen_data["node"]["x"],
             y = scen_data["node"]["y"],
-            pad = 30,
+            pad = 10,
             customdata= scen_data["node"]["percentage"],
             hovertemplate='<b>%{label}</b><br>'+'%{value} <br>'+'%{customdata}'+'<extra></extra>'
         ),
