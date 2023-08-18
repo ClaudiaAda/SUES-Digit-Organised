@@ -23,7 +23,7 @@ It could be implemented using the university's servers as a host.
 Once you have the .csv files with all the peak hour data in all possible scenarios upload them into the "Scenarios" folder. It is important that the name of these files follows the standardisation: 
 
 For constants:
-> vensim_data_Constants_#kommun_ver.csv
+> vensim_data_Constants_´´´kommun_ver´´´.csv
 
 ## Internal losses target
 
