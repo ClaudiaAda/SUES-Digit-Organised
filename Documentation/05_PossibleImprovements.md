@@ -29,7 +29,7 @@ For variables year values:
 > vensim_data_Scen`scenario`_`kommun`_ver.csv
 
 For variables peakhours:
-> vensim_data_Scen`scenario`_PeakHour`winter_summer`_`kommun`_ver.csv
+> vensim_data_Scen`scenario`_PeakHour`winter_summer` _`kommun`_ver.csv
 
 Where:
 
