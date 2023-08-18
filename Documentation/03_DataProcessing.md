@@ -32,9 +32,9 @@ with open("Latest Folder/D_All_Labels_Dictionary.json") as dictionary:
         info_data = json.load(dictionary)
 ```
 
-- 2º loaded is a excel file that only contains the names of the energy types, along with the translations in Swedish and corrected English.
+- 2º loaded is the [F_Sankey_Language_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/F_Sankey_Language_Dictionary.csv) an excel file that only contains the names of the energy types, along with the translations in Swedish and corrected English.
 
-This file it is treated to store the energy types' names as the rows of the dataframe, so later we can use this value to find the translation. Translator is the dictionary that stores this data.
+This file is treated to store the energy types' names as the rows of the dataframe, so later we can use this value to find the translation. "translator" is the dictionary that stores this data.
 
  - `pd.read_csv`(""): Store the csv from the path indicated
 
@@ -48,15 +48,15 @@ translator = pd.DataFrame(data1, columns = ["EN"], index=rows)
 translator["SV"] = list(translator_dictionary["SV"]) 
 ```
 
-- 3º loaded is the vensim's excel file with the data from the constant variables. Relative path can be written mixing text and declared variables. In this case, it is used the value from the variables from [main file]() to access to the desired file.
+- 3º loaded is the [vensim's excel file](https://github.com/ClaudiaAda/SUES-Digit-Organised/tree/main/1.%20EXECUTABLE/Scenarios) with the data from the constant variables. Relative path can be written mixing text and declared variables. In this case, it is used the value from the variables from [main file](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/01_Main.md) to access to the desired file.
 
-Then, in [constant_variables] and [scen_variables] it is stored the names of their respectives energies so later their values are searched in the correct excel file. 
+Then, in "constant_variables" and "scen_variables" it is stored the names of their respectives energies so later their values are searched in the correct excel file. 
 ```python
 constant_file = pd.read_csv("Latest Folder\Scenarios/vensim_data_Constants_" + kommun + "_ver.csv")
 constant_variables = list(constant_file.head(0))
 ```
 
-- 4º is the declaration for scen_data, the data that is wanted to be exported for [Sankey Diagram](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/SankeyDiagram.md). It has all the attributes needed to create a Sankey.
+- 4º is the declaration for scen_data, the data that is wanted to be exported for [Sankey Diagram](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/Documentation/02_SankeyDiagram.md). It has all the attributes needed to create a Sankey.
 ```python
  scen_data = {"node": { "label":[], "color":[], "x": [], "y": [], "percentage": []},         
                 "link": { "source":[], "target":[], "value":[], "color":[]},
@@ -155,7 +155,7 @@ num_row = list(set(cond1) & set(cond2))
 ```
 
 ### Declaration of node's data
-In this loop, all energy types declared in [All_Labels_Dictionary] are read. If they appear in the variable or constant file, and if their value is not cero, their name will be stored along a number in node_positions. 
+In this loop, all energy types declared in [D_All_Labels_Dictionary](https://github.com/ClaudiaAda/SUES-Digit-Organised/blob/main/1.%20EXECUTABLE/D_All_Labels_Dictionary.json) are read. If they appear in the variable or constant file, and if their value is not zero, their name will be stored along a number in node_positions. 
 
 > There is a special case with electric energy export because in some cases its value can be negative, so it has to change its name and properties.
 
@@ -180,7 +180,7 @@ In this loop, all energy types declared in [All_Labels_Dictionary] are read. If 
                         node_value = -node_value
                         label2 = "electric energy export"
 ```
-Next, it is declared the data necessary for the Sankey of this variables. This data is stored in scen_data. To add information to the dictionary it is used the function `.append()`
+Next, it is declared the data necessary for the Sankey of these variables. This data is stored in scen_data. To add information to the dictionary it is used the function `.append()`
 ```python
     dictionary["pos1"]["pos2"]["..."].append(value)
 ```
@@ -193,7 +193,7 @@ First, it is saved the name that will appear in their nodes (Swedish or English)
                     #Save the color to show
                     scen_data["node"]["color"].append(info_data[label2]["color"])
 ```
-Later, it is calculated the percentage of the node in relation to the total energy. This value is displayed in the Sankey, but also used to determine the y-axis position. That's why for column 1 it is used sum energy production and for column 3 sum energy usage, and both are stored as strings for the Sankey. However, for column 2 there is no sum of energies to compare, so it is not display, and the y-axis is calculate approximately.
+Later, it is calculated the percentage of the node in relation to the total energy. This value is displayed in the Sankey, but also used to determine the y-axis position. That's why for column 1 it is used sum energy production and for column 3 sum energy usage, and both are stored as strings for the Sankey. However, for column 2 there is no sum of energies to compare, so it is not displayed, and the y-axis is calculated approximately.
 ```python
                     if info_data[label2]["column"] == 1:
                         percentage_value = node_value/s_e_production
